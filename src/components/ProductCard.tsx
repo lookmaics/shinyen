@@ -52,7 +52,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         triggerHaptic(6);
         onOpenDetails(product);
       }}
-      className="group bg-white rounded-2xl overflow-hidden border border-slate-100/80 shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col"
+      className="group bg-white rounded-2xl overflow-hidden border border-slate-100/80 shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col tap-depress"
     >
       {/* Product Image & Badges */}
       <div className="relative aspect-4/5 w-full overflow-hidden bg-slate-100">
@@ -147,7 +147,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 triggerHaptic(12);
                 setReminded((prev) => !prev);
               }}
-              className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-xs active:scale-95 transition-all ${
+              className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-xs tap-depress transition-all ${
                 reminded
                   ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                   : "bg-amber-500 hover:bg-amber-600 text-white"
@@ -172,7 +172,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 triggerHaptic(12);
                 onQuickBid?.(product);
               }}
-              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-xs flex items-center gap-1 shadow-xs active:scale-95 transition-all"
+              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-xs flex items-center gap-1 shadow-xs tap-depress transition-all"
             >
               <Flame className="w-3.5 h-3.5 fill-white" />
               <span>Bid</span>
@@ -184,7 +184,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 triggerHaptic(10);
                 onAddToCart?.(product);
               }}
-              className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs flex items-center gap-1 shadow-xs active:scale-95 transition-all"
+              className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs flex items-center gap-1 shadow-xs tap-depress transition-all"
             >
               <span>Buy</span>
               <ArrowRight className="w-3 h-3" />

@@ -34,7 +34,7 @@ export const CategoryTabs: React.FC<CategoryTabsProps> = ({ selected, onSelect }
                 triggerHaptic(8);
                 onSelect(cat.id);
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all active:scale-95 ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all tap-depress ${
                 isActive
                   ? "bg-slate-900 text-white shadow-xs"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200/70"

@@ -48,7 +48,7 @@ export const NavigationBottom: React.FC<NavigationBottomProps> = ({
                 triggerHaptic(8);
                 onSelectTab(tab.id);
               }}
-              className={`relative flex flex-col items-center justify-center w-14 py-1 active:scale-95 transition-all ${
+              className={`relative flex flex-col items-center justify-center w-14 py-1 tap-depress transition-all ${
                 isActive ? "text-rose-600" : "text-slate-400 hover:text-slate-600"
               }`}
             >

@@ -132,7 +132,7 @@ export default function ProductDetailPage() {
               router.push("/");
             }
           }}
-          className="p-2 -ml-2 text-slate-700 hover:text-slate-900 rounded-full active:bg-slate-100"
+          className="p-2 -ml-2 text-slate-700 hover:text-slate-900 rounded-full active:bg-slate-100 tap-depress"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -366,7 +366,7 @@ export default function ProductDetailPage() {
                 triggerHaptic(15);
                 setAuctionDrawerOpen(true);
               }}
-              className="flex-1 py-3 bg-gradient-to-r from-red-600 to-rose-700 text-white font-extrabold text-sm rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-rose-200 active:scale-98 transition-all"
+              className="flex-1 py-3 bg-gradient-to-r from-red-600 to-rose-700 text-white font-extrabold text-sm rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-rose-200 tap-depress transition-all"
             >
               <Flame className="w-4 h-4 fill-white" />
               <span>Place Bid (Quick +₹50)</span>
@@ -383,7 +383,7 @@ export default function ProductDetailPage() {
                 triggerHaptic(15);
                 setCheckoutDrawerOpen(true);
               }}
-              className="flex-1 py-3 bg-slate-900 text-white font-extrabold text-sm rounded-xl flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all hover:bg-slate-800"
+              className="flex-1 py-3 bg-slate-900 text-white font-extrabold text-sm rounded-xl flex items-center justify-center gap-2 shadow-lg tap-depress transition-all hover:bg-slate-800"
             >
               <ShoppingBag className="w-4 h-4" />
               <span>Instant Checkout (UPI)</span>

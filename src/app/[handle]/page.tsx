@@ -97,7 +97,7 @@ export default function BoutiqueProfilePage() {
               router.push("/");
             }
           }}
-          className="p-2 -ml-2 text-slate-700 hover:text-slate-900 rounded-full active:bg-slate-100"
+          className="p-2 -ml-2 text-slate-700 hover:text-slate-900 rounded-full active:bg-slate-100 tap-depress"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>

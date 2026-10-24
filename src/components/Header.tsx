@@ -21,7 +21,13 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-xs pt-safe">
       <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-between gap-3">
         {/* Brand Logo & Cultural Typography */}
-        <div className="flex items-center gap-1.5 cursor-pointer">
+        <div
+          onClick={() => {
+            triggerHaptic(6);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className="flex items-center gap-1.5 cursor-pointer tap-depress"
+        >
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center shadow-xs">
             <span className="text-white font-bold text-base tracking-tighter">ꯁ</span>
           </div>
@@ -45,7 +51,7 @@ export const Header: React.FC<HeaderProps> = ({
               triggerHaptic(8);
               onLocationClick?.();
             }}
-            className="flex items-center gap-1 text-[11px] font-medium text-slate-600 bg-slate-100/80 hover:bg-slate-200/80 px-2.5 py-1.5 rounded-full transition-colors"
+            className="flex items-center gap-1 text-[11px] font-medium text-slate-600 bg-slate-100/80 hover:bg-slate-200/80 px-2.5 py-1.5 rounded-full transition-colors tap-depress"
           >
             <MapPin className="w-3 h-3 text-rose-600 shrink-0" />
             <span className="truncate max-w-[85px]">{selectedDistrict}</span>
@@ -56,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({
               triggerHaptic(12);
               onCartClick?.();
             }}
-            className="relative p-2 rounded-full text-slate-700 hover:bg-slate-100 active:scale-95 transition-all"
+            className="relative p-2 rounded-full text-slate-700 hover:bg-slate-100 tap-depress transition-all"
             aria-label="Cart"
           >
             <ShoppingBag className="w-5 h-5" />

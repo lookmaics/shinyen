@@ -121,3 +121,46 @@
   animation: shimmer 1.5s infinite;
   content: "";
 }
+
+/* Native iOS & Threads Transition Engine (Option 1) */
+@keyframes ios-page-enter {
+  0% {
+    opacity: 0.94;
+    transform: translate3d(28px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes tab-crossfade {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 5px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.ios-page-enter {
+  animation: ios-page-enter 240ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.tab-enter {
+  animation: tab-crossfade 130ms cubic-bezier(0.2, 0, 0, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Tactile Native Button / Card Depress (GPU accelerated 60/120fps) */
+.tap-depress {
+  transition: transform 120ms cubic-bezier(0.2, 0, 0, 1), box-shadow 120ms ease;
+  transform: translateZ(0);
+  will-change: transform;
+}
+.tap-depress:active {
+  transform: scale3d(0.965, 0.965, 1);
+}

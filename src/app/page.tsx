@@ -54,6 +54,15 @@ export default function Home() {
   const [exitToast, setExitToast] = useState(false);
   const lastBackPressRef = useRef(0);
 
+  // Preserved Scroll Position across tabs
+  const tabScrollRef = useRef<Record<NavTab, number>>({
+    store: 0,
+    drops: 0,
+    sell: 0,
+    orders: 0,
+    profile: 0,
+  });
+
   // Tab Backstack & Root Guard Synchronization
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -78,9 +87,18 @@ export default function Home() {
 
       if (validTabs.includes(currentHash)) {
         setCurrentTab(currentHash);
+        // Restore scroll position
+        requestAnimationFrame(() => {
+          const savedY = tabScrollRef.current[currentHash] || 0;
+          window.scrollTo({ top: savedY, behavior: "instant" });
+        });
       } else {
         // Return to store tab
         setCurrentTab("store");
+        requestAnimationFrame(() => {
+          const savedY = tabScrollRef.current["store"] || 0;
+          window.scrollTo({ top: savedY, behavior: "instant" });
+        });
 
         // Double-back exit protection
         const now = Date.now();
@@ -101,10 +119,30 @@ export default function Home() {
 
   const handleSelectTab = (tab: NavTab) => {
     setShowRiderPortal(false);
-    if (tab === currentTab) return;
-    triggerHaptic(10);
+    if (tab === currentTab) {
+      // Tap active tab to scroll smoothly to top (native iOS / Instagram mechanic)
+      triggerHaptic(6);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    // 1. Save scroll position of current tab
+    if (typeof window !== "undefined") {
+      tabScrollRef.current[currentTab] = window.scrollY;
+    }
+
+    // 2. Micro haptic click (8ms)
+    triggerHaptic(8);
+
+    // 3. Update history & state
     window.history.pushState({ shinyen_tab: tab }, "", `#${tab}`);
     setCurrentTab(tab);
+
+    // 4. Restore scroll position of destination tab on next frame
+    requestAnimationFrame(() => {
+      const savedY = tabScrollRef.current[tab] || 0;
+      window.scrollTo({ top: savedY, behavior: "instant" });
+    });
   };
 
   // Filter products based on tab and category
@@ -235,7 +273,7 @@ export default function Home() {
         <>
           {/* TAB 1: STORE / TAB 2: LIVE DROPS */}
           {(currentTab === "store" || currentTab === "drops") && (
-            <div className="space-y-3">
+            <div key={currentTab} className="tab-enter space-y-3">
               {/* Stories Carousel */}
               <StoriesCarousel
                 stories={mockStories}
@@ -297,14 +335,22 @@ export default function Home() {
           )}
 
           {/* TAB 3: SELLER STUDIO (60s Listing) */}
-          {currentTab === "sell" && <SellerStudio />}
+          {currentTab === "sell" && (
+            <div key="sell" className="tab-enter">
+              <SellerStudio />
+            </div>
+          )}
 
           {/* TAB 4: ORDERS VIEW (OTP & Tracking) */}
-          {currentTab === "orders" && <OrdersView />}
+          {currentTab === "orders" && (
+            <div key="orders" className="tab-enter">
+              <OrdersView />
+            </div>
+          )}
 
           {/* TAB 5: PROFILE VIEW */}
           {currentTab === "profile" && (
-            <div className="p-4 space-y-4 max-w-md mx-auto pb-24">
+            <div key="profile" className="tab-enter p-4 space-y-4 max-w-md mx-auto pb-24">
               <div className="flex items-center gap-3.5 bg-white p-4 rounded-2xl border border-slate-100 shadow-xs">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-rose-500 to-red-600 flex items-center justify-center text-white font-extrabold text-xl shadow-xs">
                   BD
