@@ -183,7 +183,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex-1 flex flex-col pb-20">
+    <div className="flex-1 flex flex-col pb-24">
       {/* Top App Header */}
       <Header
         cartCount={cartCount}
