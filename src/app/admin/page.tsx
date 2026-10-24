@@ -103,7 +103,7 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col pb-24">
+    <div className="ios-page-enter min-h-screen bg-slate-900 text-slate-100 flex flex-col pb-24">
       {/* Admin Top Header */}
       <div className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 pt-safe h-header-safe flex items-center justify-between">
         <Link
