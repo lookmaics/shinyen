@@ -34,39 +34,50 @@ export const NavigationBottom: React.FC<NavigationBottomProps> = ({
 
   const activeIndex = tabs.findIndex((t) => t.id === currentTab);
   const safeIndex = activeIndex === -1 ? 0 : activeIndex;
+  const ActiveIcon = tabs[safeIndex].icon;
 
   return (
     <nav className="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200/80 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] select-none">
-      {/* Safe Area Container: White background extends all the way to bottom of phone screen */}
+      {/* Safe Area Wrapper: Ensures solid white background extends all the way to bottom edge of screen */}
       <div className="max-w-md mx-auto relative pb-safe">
         <div className="h-[58px] relative">
           
-          {/* Sliding Circular Ring & Curved Wings Indicator */}
+          {/* Sliding Scooped Pit & Suspended Floating Circle */}
           <div
-            className="absolute -top-[14px] left-0 w-1/5 flex flex-col items-center pointer-events-none transition-transform duration-350 ease-[cubic-bezier(0.34,1.4,0.64,1)] z-10"
+            className="absolute -top-[12px] left-0 w-1/5 flex flex-col items-center pointer-events-none transition-transform duration-350 ease-[cubic-bezier(0.34,1.4,0.64,1)] z-10"
             style={{
               transform: `translate3d(${safeIndex * 100}%, 0, 0)`,
             }}
           >
             <div className="relative flex items-center justify-center">
-              {/* Left Concave Wing (Mathematical Bezier Fillet) */}
+              {/* The U-Shaped Scooped Pit Trench (Black background cavity carving into the white bar) */}
               <svg
-                className="w-4 h-4 absolute -left-3.5 bottom-[4px] text-white fill-current pointer-events-none drop-shadow-[0_-1px_1px_rgba(0,0,0,0.03)]"
-                viewBox="0 0 16 16"
+                className="w-[76px] h-[48px] absolute top-0 pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.12)]"
+                viewBox="0 0 76 48"
               >
-                <path d="M0 16 C6 16, 12 10, 16 0 L16 16 Z" />
+                <path
+                  d="M 0 12 C 8 12, 12 16, 16 24 C 22 38, 28 46, 38 46 C 48 46, 54 38, 60 24 C 64 16, 68 12, 76 12 L 76 0 L 0 0 Z"
+                  fill="#0f172a"
+                />
               </svg>
 
-              {/* Elevated Circle with Black Border matching reference video */}
-              <div className="w-[44px] h-[44px] rounded-full bg-white border-[2.5px] border-slate-900 shadow-sm flex items-center justify-center relative z-20" />
+              {/* Suspended White Circle with Bold Black Border (Floating in the pit with a 6px dark gap around it) */}
+              <div className="w-[44px] h-[44px] rounded-full bg-white border-[3px] border-slate-900 shadow-md flex items-center justify-center relative z-20 mt-[2px]">
+                {/* Active Icon with Energetic Spring Pop Micro-Animation */}
+                <div
+                  key={currentTab}
+                  className="w-full h-full flex items-center justify-center animate-icon-pop"
+                >
+                  <ActiveIcon className="w-5 h-5 text-slate-900 stroke-[2.2]" />
+                </div>
 
-              {/* Right Concave Wing (Mathematical Bezier Fillet) */}
-              <svg
-                className="w-4 h-4 absolute -right-3.5 bottom-[4px] text-white fill-current pointer-events-none drop-shadow-[0_-1px_1px_rgba(0,0,0,0.03)]"
-                viewBox="0 0 16 16"
-              >
-                <path d="M0 0 C4 10, 10 16, 16 16 L0 16 Z" />
-              </svg>
+                {/* Orders Badge: attached to the circle when Orders tab is active */}
+                {tabs[safeIndex].id === "orders" && Boolean(activeOrderCount && activeOrderCount > 0) && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] font-bold flex items-center justify-center shadow-xs">
+                    {activeOrderCount}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
@@ -83,37 +94,33 @@ export const NavigationBottom: React.FC<NavigationBottomProps> = ({
                     triggerHaptic(10);
                     onSelectTab(tab.id);
                   }}
-                  className="relative flex flex-col items-center justify-center h-full tap-depress outline-none"
+                  className="relative flex flex-col items-center justify-end pb-2 pt-1 h-full tap-depress outline-none"
                   aria-label={tab.label}
                 >
-                  {/* Tab Icon: Smoothly lifts directly into the center of the circular ring when active */}
+                  {/* Inactive Icon (Smoothly fades out on active tab because the suspended circle displays the active icon) */}
                   <div
-                    className={`relative transition-all duration-300 ease-[cubic-bezier(0.34,1.3,0.64,1)] flex items-center justify-center ${
+                    className={`transition-all duration-200 flex items-center justify-center mb-1 relative ${
                       isActive
-                        ? "-translate-y-3.5 text-slate-900 scale-105 z-30"
-                        : "translate-y-0 text-slate-400 hover:text-slate-600 scale-100"
+                        ? "opacity-0 scale-75 pointer-events-none"
+                        : "opacity-100 scale-100 text-slate-400 hover:text-slate-600"
                     }`}
                   >
-                    <Icon className="w-5 h-5 stroke-[2]" />
+                    <Icon className="w-5 h-5 stroke-[1.8]" />
 
-                    {/* Orders Badge: stays firmly attached to the Orders icon */}
-                    {Boolean(tab.badgeCount && tab.badgeCount > 0) && (
-                      <span
-                        className={`absolute -top-1 -right-2 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] font-bold flex items-center justify-center shadow-xs transition-transform ${
-                          isActive ? "scale-90" : "animate-pulse"
-                        }`}
-                      >
-                        {tab.badgeCount}
+                    {/* Inactive Orders Badge */}
+                    {!isActive && tab.id === "orders" && Boolean(activeOrderCount && activeOrderCount > 0) && (
+                      <span className="absolute -top-1 -right-2 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] font-bold flex items-center justify-center animate-pulse shadow-xs">
+                        {activeOrderCount}
                       </span>
                     )}
                   </div>
 
-                  {/* Tab Label: snugly placed right beneath the circle with NO awkward gap */}
+                  {/* Tab Label: Snugly positioned beneath the pit */}
                   <span
-                    className={`text-[10px] tracking-tight transition-all duration-200 select-none mt-0.5 ${
+                    className={`text-[10px] tracking-tight transition-colors duration-200 select-none ${
                       isActive
-                        ? "text-slate-900 font-extrabold translate-y-[-2px]"
-                        : "text-slate-400 font-medium translate-y-0"
+                        ? "text-slate-900 font-extrabold"
+                        : "text-slate-400 font-medium"
                     }`}
                   >
                     {tab.label}
