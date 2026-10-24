@@ -35,59 +35,19 @@ const StoreAnimatedIcon: React.FC<AnimatedIconProps> = ({ isActive, className })
       className={className}
     >
       {/* Storefront Base Walls & Doorway */}
-      <motion.path
+      <path
         d="M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"
-        initial={false}
-        animate={
-          isActive
-            ? { y: [2.5, -0.5, 0], scaleY: [0.85, 1.04, 1] }
-            : { y: 0, scaleY: 1 }
-        }
-        style={{ originX: "12px", originY: "21px" }}
-        transition={{
-          type: "spring",
-          stiffness: 440,
-          damping: 16,
-          mass: 0.7,
-        }}
+        className={isActive ? "animate-store-base" : ""}
       />
       {/* Boutique Entrance Door Arch */}
-      <motion.path
+      <path
         d="M9.5 21v-5.5a2.5 2.5 0 0 1 5 0V21"
-        initial={false}
-        animate={
-          isActive
-            ? { scaleY: [0.4, 1.08, 1], opacity: [0.5, 1, 1] }
-            : { scaleY: 1, opacity: 1 }
-        }
-        style={{ originX: "12px", originY: "21px" }}
-        transition={{
-          type: "spring",
-          stiffness: 480,
-          damping: 15,
-          mass: 0.6,
-          delay: isActive ? 0.04 : 0,
-        }}
+        className={isActive ? "animate-store-base" : ""}
       />
       {/* Scalloped Boutique Awning / Canopy Roof (Drops & bounces onto building) */}
-      <motion.path
+      <path
         d="M3 7.5 4.8 3.6A1.5 1.5 0 0 1 6.16 3h11.68a1.5 1.5 0 0 1 1.36.6L21 7.5c0 2-1.5 3.5-3.2 3.5-1.5 0-2.6-.9-2.8-2-.2 1.1-1.3 2-3 2s-2.8-.9-3-2c-.2 1.1-1.3 2-2.8 2C4.5 11 3 9.5 3 7.5Z"
-        initial={false}
-        animate={
-          isActive
-            ? {
-                y: [-6.5, 1.6, -0.6, 0],
-                scaleX: [0.88, 1.06, 0.98, 1],
-              }
-            : { y: 0, scaleX: 1 }
-        }
-        style={{ originX: "12px", originY: "7px" }}
-        transition={{
-          type: "spring",
-          stiffness: 510,
-          damping: 13,
-          mass: 0.65,
-        }}
+        className={isActive ? "animate-store-awning" : ""}
       />
     </svg>
   );
@@ -111,49 +71,16 @@ const DropsAnimatedIcon: React.FC<AnimatedIconProps> = ({ isActive, className })
       className={className}
     >
       {/* Outer Flame Silhouette */}
-      <motion.path
+      <path
         d="M12 2.5c1.5 3.2 4.5 5.3 5.7 8.4a6.8 6.8 0 0 1-11.4 6.6c-1.5-2.1-1.6-5.2-.1-7.6.7 1.3 1.9 2 2.6 2.1-.4-2.8 1-6.5 3.2-9.5Z"
-        initial={false}
-        animate={
-          isActive
-            ? {
-                scaleY: [0.68, 1.15, 0.94, 1.04, 1],
-                scaleX: [0.82, 0.92, 1.06, 0.98, 1],
-                rotate: [-10, 7, -4, 2, 0],
-              }
-            : { scaleY: 1, scaleX: 1, rotate: 0 }
-        }
-        style={{ originX: "12px", originY: "20px" }}
-        transition={{
-          type: "spring",
-          stiffness: 460,
-          damping: 12,
-          mass: 0.6,
-        }}
+        className={isActive ? "animate-flame-outer" : ""}
       />
       {/* Inner Flame Core Tongue */}
-      <motion.path
+      <path
         d="M12 13.2c1.1 1.1 1.8 2.2 1.5 3.5a2.1 2.1 0 0 1-3.5 1.1c-.5-.8-.4-1.9.3-2.8.5-.6 1.1-1.1 1.7-1.8Z"
         fill={isActive ? "currentColor" : "none"}
-        fillOpacity={isActive ? 0.16 : 0}
-        initial={false}
-        animate={
-          isActive
-            ? {
-                scale: [0.35, 1.24, 0.9, 1],
-                rotate: [12, -9, 4, 0],
-                y: [2, -1, 0],
-              }
-            : { scale: 1, rotate: 0, y: 0 }
-        }
-        style={{ originX: "12px", originY: "18px" }}
-        transition={{
-          type: "spring",
-          stiffness: 520,
-          damping: 12,
-          mass: 0.5,
-          delay: isActive ? 0.03 : 0,
-        }}
+        fillOpacity={isActive ? 0.22 : 0}
+        className={isActive ? "animate-flame-inner" : ""}
       />
     </svg>
   );
@@ -167,59 +94,24 @@ const DropsAnimatedIcon: React.FC<AnimatedIconProps> = ({ isActive, className })
 const SellAnimatedIcon: React.FC<AnimatedIconProps> = ({ isActive, className }) => {
   const strokeWidth = isActive ? 2.35 : 1.9;
   return (
-    <motion.svg
+    <svg
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={className}
-      initial={false}
-      animate={
-        isActive
-          ? { rotate: [-90, 8, -3, 0], scale: [0.55, 1.14, 0.96, 1] }
-          : { rotate: 0, scale: 1 }
-      }
-      transition={{
-        type: "spring",
-        stiffness: 490,
-        damping: 14,
-        mass: 0.6,
-      }}
+      className={`${className || ""} ${isActive ? "animate-sell-plus" : ""}`}
     >
       {/* Subtle outer halo ring only when inactive so active state is a pure crisp '+' inside the 44px disc */}
       {!isActive && (
         <circle cx="12" cy="12" r="8.5" strokeWidth={1.65} className="opacity-85" />
       )}
       {/* Vertical Axis */}
-      <motion.path
-        d={isActive ? "M12 5.25v13.5" : "M12 8.5v7"}
-        initial={false}
-        animate={isActive ? { scaleY: [0.4, 1.1, 1] } : { scaleY: 1 }}
-        style={{ originX: "12px", originY: "12px" }}
-        transition={{
-          type: "spring",
-          stiffness: 520,
-          damping: 15,
-          mass: 0.55,
-        }}
-      />
+      <path d={isActive ? "M12 5.25v13.5" : "M12 8.5v7"} />
       {/* Horizontal Axis */}
-      <motion.path
-        d={isActive ? "M5.25 12h13.5" : "M8.5 12h7"}
-        initial={false}
-        animate={isActive ? { scaleX: [0.4, 1.1, 1] } : { scaleX: 1 }}
-        style={{ originX: "12px", originY: "12px" }}
-        transition={{
-          type: "spring",
-          stiffness: 520,
-          damping: 15,
-          mass: 0.55,
-          delay: isActive ? 0.02 : 0,
-        }}
-      />
-    </motion.svg>
+      <path d={isActive ? "M5.25 12h13.5" : "M8.5 12h7"} />
+    </svg>
   );
 };
 
@@ -241,63 +133,19 @@ const OrdersAnimatedIcon: React.FC<AnimatedIconProps> = ({ isActive, className }
       className={className}
     >
       {/* Parcel Lower Body */}
-      <motion.path
+      <path
         d="M3.5 8.5v8.2a2.2 2.2 0 0 0 1.2 2l6.3 3.1a2.2 2.2 0 0 0 2 0l6.3-3.1a2.2 2.2 0 0 0 1.2-2V8.5"
-        initial={false}
-        animate={
-          isActive
-            ? {
-                y: [-4, 1.5, 0],
-                scaleY: [1.08, 0.9, 1],
-                scaleX: [0.92, 1.05, 1],
-              }
-            : { y: 0, scaleY: 1, scaleX: 1 }
-        }
-        style={{ originX: "12px", originY: "21px" }}
-        transition={{
-          type: "spring",
-          stiffness: 460,
-          damping: 15,
-          mass: 0.7,
-        }}
+        className={isActive ? "animate-box-base" : ""}
       />
       {/* Parcel Top Lid Flaps & Seam (Pops up and snaps onto box) */}
-      <motion.g
-        initial={false}
-        animate={
-          isActive
-            ? { y: [-6.5, 1, -0.4, 0], scale: [0.86, 1.05, 1] }
-            : { y: 0, scale: 1 }
-        }
-        style={{ originX: "12px", originY: "6px" }}
-        transition={{
-          type: "spring",
-          stiffness: 510,
-          damping: 14,
-          mass: 0.6,
-          delay: isActive ? 0.02 : 0,
-        }}
-      >
+      <g className={isActive ? "animate-box-lid" : ""}>
         <path d="m3.7 8.2 7.3-4.1a2.1 2.1 0 0 1 2 0l7.3 4.1-7.3 4.1a2.1 2.1 0 0 1-2 0L3.7 8.2Z" />
         <path d="m7.5 6.1 8.8 4.2" />
-      </motion.g>
+      </g>
       {/* Escrow Verification Checkmark on Front Face */}
-      <motion.path
+      <path
         d="m9.2 15.6 2 2 3.8-3.8"
-        initial={false}
-        animate={
-          isActive
-            ? { pathLength: [0, 1], opacity: [0.3, 1], scale: [0.85, 1.08, 1] }
-            : { pathLength: 1, opacity: 0.9, scale: 1 }
-        }
-        style={{ originX: "12px", originY: "16px" }}
-        transition={{
-          type: "spring",
-          stiffness: 420,
-          damping: 18,
-          mass: 0.6,
-          delay: isActive ? 0.06 : 0,
-        }}
+        className={isActive ? "animate-box-check" : ""}
       />
     </svg>
   );
@@ -321,49 +169,16 @@ const ProfileAnimatedIcon: React.FC<AnimatedIconProps> = ({ isActive, className 
       className={className}
     >
       {/* Head Circle: Drops from above & bounces elastically onto torso */}
-      <motion.circle
+      <circle
         cx="12"
         cy="8"
         r="4"
-        initial={false}
-        animate={
-          isActive
-            ? {
-                y: [-7.5, 2.2, -1.2, 0.4, 0],
-                scaleX: [0.85, 1.12, 0.95, 1.02, 1],
-                scaleY: [1.12, 0.88, 1.05, 0.98, 1],
-              }
-            : { y: 0, scaleX: 1, scaleY: 1 }
-        }
-        style={{ originX: "12px", originY: "8px" }}
-        transition={{
-          type: "spring",
-          stiffness: 540,
-          damping: 13,
-          mass: 0.65,
-        }}
+        className={isActive ? "animate-profile-head" : ""}
       />
       {/* Shoulders / Torso Arch: Absorbs impact & rebounds */}
-      <motion.path
+      <path
         d="M5.2 20v-1.2a6.8 6.8 0 0 1 13.6 0V20"
-        initial={false}
-        animate={
-          isActive
-            ? {
-                y: [0, 1.8, -0.5, 0],
-                scaleX: [0.9, 1.06, 0.98, 1],
-                scaleY: [1, 0.9, 1.03, 1],
-              }
-            : { y: 0, scaleX: 1, scaleY: 1 }
-        }
-        style={{ originX: "12px", originY: "20px" }}
-        transition={{
-          type: "spring",
-          stiffness: 460,
-          damping: 15,
-          mass: 0.75,
-          delay: isActive ? 0.04 : 0,
-        }}
+        className={isActive ? "animate-profile-torso" : ""}
       />
     </svg>
   );
@@ -475,17 +290,9 @@ export const NavigationBottom: React.FC<NavigationBottomProps> = ({
                   {/* Circle sits at y = -15px..+29px; Scoop bottom is y = 39.5px */}
                   {/* ========================================================== */}
                   <div className="absolute -top-[15px] left-1/2 -translate-x-1/2 w-[44px] h-[44px] z-20">
-                    <motion.div
+                    <div
                       key={currentTab}
-                      initial={{ y: 3.5, scale: 0.88 }}
-                      animate={{ y: 0, scale: 1 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 500,
-                        damping: 18,
-                        mass: 0.65,
-                      }}
-                      className="w-full h-full rounded-full bg-white border-[2.25px] border-slate-900 shadow-[0_6px_16px_-2px_rgba(15,23,42,0.14),0_2px_6px_-1px_rgba(15,23,42,0.08)] flex items-center justify-center relative"
+                      className="w-full h-full rounded-full bg-white border-[2.25px] border-slate-900 shadow-[0_6px_16px_-2px_rgba(15,23,42,0.14),0_2px_6px_-1px_rgba(15,23,42,0.08)] flex items-center justify-center relative animate-circle-pop"
                     >
                       <ActiveIcon
                         isActive={true}
@@ -512,7 +319,7 @@ export const NavigationBottom: React.FC<NavigationBottomProps> = ({
                             </motion.span>
                           )}
                       </AnimatePresence>
-                    </motion.div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
