@@ -5,6 +5,7 @@ import { Drawer } from "vaul";
 import { ProductItem, BidRecord } from "@/types";
 import { formatINR, triggerHaptic } from "@/lib/utils";
 import { useAuctionClock } from "@/hooks/useAuctionClock";
+import { useModalBackstack } from "@/hooks/useBackstack";
 import { WhatsAppVerifyModal } from "@/components/WhatsAppVerifyModal";
 import {
   Flame,
@@ -32,6 +33,9 @@ export const AuctionDrawer: React.FC<AuctionDrawerProps> = ({
   onClose,
   onBidPlaced,
 }) => {
+  // Mobile Backstack Sync (swiping back dismisses drawer instead of quitting PWA)
+  useModalBackstack("auction-drawer", isOpen, onClose);
+
   const [currentPrice, setCurrentPrice] = useState<number>(product?.currentBid || 0);
   const [endTime, setEndTime] = useState<string | undefined>(product?.endTime);
   const [bids, setBids] = useState<BidRecord[]>([]);

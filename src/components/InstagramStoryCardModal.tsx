@@ -3,6 +3,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { X, Download, Share2, Sparkles, Check } from "lucide-react";
 import { formatINR, triggerHaptic } from "@/lib/utils";
+import { useModalBackstack } from "@/hooks/useBackstack";
 
 interface InstagramStoryCardModalProps {
   isOpen: boolean;
@@ -25,6 +26,8 @@ export const InstagramStoryCardModal: React.FC<InstagramStoryCardModalProps> = (
   sellerHandle = "imphalthrift",
   imageUrl = "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80",
 }) => {
+  useModalBackstack("story-card", isOpen, onClose);
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);

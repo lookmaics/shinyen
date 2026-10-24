@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { MessageCircle, ShieldCheck, Check, Sparkles, X, ArrowRight } from "lucide-react";
 import { triggerHaptic } from "@/lib/utils";
+import { useModalBackstack } from "@/hooks/useBackstack";
 
 interface WhatsAppVerifyModalProps {
   isOpen: boolean;
@@ -15,6 +16,8 @@ export const WhatsAppVerifyModal: React.FC<WhatsAppVerifyModalProps> = ({
   onClose,
   onVerified,
 }) => {
+  useModalBackstack("whatsapp-verify", isOpen, onClose);
+
   const [token, setToken] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [verifiedSuccess, setVerifiedSuccess] = useState(false);

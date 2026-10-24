@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 import { formatINR, triggerHaptic } from "@/lib/utils";
+import { useModalBackstack } from "@/hooks/useBackstack";
 import { ShieldCheck, Package, Clock, Video, CheckCircle2, ChevronRight, AlertTriangle } from "lucide-react";
 
 export const OrdersView: React.FC = () => {
   const [showDisputeModal, setShowDisputeModal] = useState(false);
+  useModalBackstack("dispute-modal", showDisputeModal, () => setShowDisputeModal(false));
 
   return (
     <div className="p-4 space-y-4 max-w-md mx-auto pb-24">

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { StoriesCarousel } from "@/components/StoriesCarousel";
@@ -13,6 +13,7 @@ import { SellerStudio } from "@/components/SellerStudio";
 import { RiderPortal } from "@/components/RiderPortal";
 import { NavigationBottom, NavTab } from "@/components/NavigationBottom";
 import { FeedbackModal } from "@/components/FeedbackModal";
+import { useModalBackstack, wasOverlayRecentlyClosed } from "@/hooks/useBackstack";
 import { mockProducts, mockStories } from "@/data/mockProducts";
 import { ProductItem } from "@/types";
 import { triggerHaptic, formatINR } from "@/lib/utils";
@@ -45,6 +46,66 @@ export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [auctionDrawerOpen, setAuctionDrawerOpen] = useState(false);
   const [checkoutDrawerOpen, setCheckoutDrawerOpen] = useState(false);
+
+  // Mobile Backstack Sync for page-level modals
+  useModalBackstack("district-select", districtModalOpen, () => setDistrictModalOpen(false));
+  useModalBackstack("rider-preview", showRiderPortal, () => setShowRiderPortal(false));
+
+  const [exitToast, setExitToast] = useState(false);
+  const lastBackPressRef = useRef(0);
+
+  // Tab Backstack & Root Guard Synchronization
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const validTabs: NavTab[] = ["store", "drops", "sell", "orders", "profile"];
+    const initialHash = window.location.hash.replace("#", "") as NavTab;
+
+    if (validTabs.includes(initialHash)) {
+      setCurrentTab(initialHash);
+    } else {
+      window.history.replaceState({ shinyen_root: true, tab: "store" }, "", "#store");
+      window.history.pushState({ shinyen_active: true, tab: "store" }, "", "#store");
+    }
+
+    const handlePopState = () => {
+      // If an overlay was closed by this pop gesture, don't change tabs or trigger exit toast
+      if (wasOverlayRecentlyClosed()) {
+        return;
+      }
+
+      const currentHash = window.location.hash.replace("#", "") as NavTab;
+
+      if (validTabs.includes(currentHash)) {
+        setCurrentTab(currentHash);
+      } else {
+        // Return to store tab
+        setCurrentTab("store");
+
+        // Double-back exit protection
+        const now = Date.now();
+        if (now - lastBackPressRef.current < 2000) {
+          window.history.back();
+        } else {
+          lastBackPressRef.current = now;
+          setExitToast(true);
+          setTimeout(() => setExitToast(false), 2000);
+          window.history.pushState({ shinyen_active: true, tab: "store" }, "", "#store");
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  const handleSelectTab = (tab: NavTab) => {
+    setShowRiderPortal(false);
+    if (tab === currentTab) return;
+    triggerHaptic(10);
+    window.history.pushState({ shinyen_tab: tab }, "", `#${tab}`);
+    setCurrentTab(tab);
+  };
 
   // Filter products based on tab and category
   const filteredProducts = mockProducts.filter((product) => {
@@ -334,10 +395,7 @@ export default function Home() {
       {/* Fixed Bottom Navigation */}
       <NavigationBottom
         currentTab={currentTab}
-        onSelectTab={(tab) => {
-          setShowRiderPortal(false);
-          setCurrentTab(tab);
-        }}
+        onSelectTab={handleSelectTab}
         activeOrderCount={activeOrderCount}
       />
 
@@ -367,6 +425,13 @@ export default function Home() {
         isOpen={feedbackModalOpen}
         onClose={() => setFeedbackModalOpen(false)}
       />
+
+      {/* Mobile Root Exit Prevention Toast */}
+      {exitToast && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-2 animate-in fade-in zoom-in-95 duration-200 border border-white/10">
+          <span>Swipe back again to exit Shinyen</span>
+        </div>
+      )}
     </div>
   );
 }

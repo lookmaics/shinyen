@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { MessageSquare, X, Check, Bug, Smartphone, MapPin, Send } from "lucide-react";
 import { triggerHaptic } from "@/lib/utils";
+import { useModalBackstack } from "@/hooks/useBackstack";
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -10,6 +11,8 @@ interface FeedbackModalProps {
 }
 
 export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose }) => {
+  useModalBackstack("feedback", isOpen, onClose);
+
   const [category, setCategory] = useState<string>("bug");
   const [deviceModel, setDeviceModel] = useState("Redmi 9A / Android 11");
   const [leikai, setLeikai] = useState("Yaiskul, Imphal West");

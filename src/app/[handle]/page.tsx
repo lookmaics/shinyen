@@ -89,7 +89,14 @@ export default function BoutiqueProfilePage() {
       {/* Top Header Bar */}
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 pt-safe h-header-safe flex items-center justify-between">
         <button
-          onClick={() => router.back()}
+          onClick={() => {
+            triggerHaptic(8);
+            if (typeof window !== "undefined" && window.history.length > 1) {
+              router.back();
+            } else {
+              router.push("/");
+            }
+          }}
           className="p-2 -ml-2 text-slate-700 hover:text-slate-900 rounded-full active:bg-slate-100"
         >
           <ArrowLeft className="w-5 h-5" />

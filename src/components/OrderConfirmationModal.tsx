@@ -3,6 +3,7 @@
 import React from "react";
 import { Check, ShieldCheck, MapPin, Package, Clock, ArrowRight, X } from "lucide-react";
 import { formatINR, triggerHaptic } from "@/lib/utils";
+import { useModalBackstack } from "@/hooks/useBackstack";
 
 interface OrderConfirmationModalProps {
   isOpen: boolean;
@@ -27,6 +28,8 @@ export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
   leikai,
   onViewOrders,
 }) => {
+  useModalBackstack("order-confirmed", isOpen, onClose);
+
   if (!isOpen) return null;
 
   return (

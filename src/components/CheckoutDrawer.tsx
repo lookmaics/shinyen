@@ -11,6 +11,7 @@ import {
   calculatePlatformFee,
 } from "@/lib/deliveryPricing";
 import { OrderConfirmationModal } from "@/components/OrderConfirmationModal";
+import { useModalBackstack } from "@/hooks/useBackstack";
 import {
   MapPin,
   Navigation,
@@ -37,6 +38,9 @@ export const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
   onClose,
   onOrderSuccess,
 }) => {
+  // Mobile Backstack Sync (swiping back dismisses drawer instead of quitting PWA)
+  useModalBackstack("checkout-drawer", isOpen, onClose);
+
   const [district, setDistrict] = useState("Imphal West");
   const [leikaiQuery, setLeikaiQuery] = useState("");
   const [selectedLeikai, setSelectedLeikai] = useState("Yaiskul Leirak");

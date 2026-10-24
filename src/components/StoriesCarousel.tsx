@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BoutiqueStory } from "@/types";
 import { triggerHaptic } from "@/lib/utils";
+import { useModalBackstack } from "@/hooks/useBackstack";
 import { X, Flame, Sparkles, Eye, Bell, Check, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface StoriesCarouselProps {
@@ -21,6 +22,16 @@ export const StoriesCarousel: React.FC<StoriesCarouselProps> = ({
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const activeStory = activeStoryIndex !== null ? stories[activeStoryIndex] : null;
+
+  const handleCloseStory = () => {
+    triggerHaptic(6);
+    setActiveStoryIndex(null);
+    setProgress(0);
+    if (timerRef.current) clearInterval(timerRef.current);
+  };
+
+  // Mobile Backstack Sync: dismiss full-screen story on swipe-back gesture
+  useModalBackstack("story-viewer", activeStoryIndex !== null, handleCloseStory);
 
   // Auto-progress timer for Instagram-like 5s story experience
   useEffect(() => {
@@ -56,13 +67,6 @@ export const StoriesCarousel: React.FC<StoriesCarouselProps> = ({
     setActiveStoryIndex(index);
     setProgress(0);
     setReminderSubscribed(false);
-  };
-
-  const handleCloseStory = () => {
-    triggerHaptic(6);
-    setActiveStoryIndex(null);
-    setProgress(0);
-    if (timerRef.current) clearInterval(timerRef.current);
   };
 
   const handlePrevStory = (e: React.MouseEvent) => {
