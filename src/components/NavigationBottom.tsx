@@ -34,40 +34,39 @@ export const NavigationBottom: React.FC<NavigationBottomProps> = ({
 
   const activeIndex = tabs.findIndex((t) => t.id === currentTab);
   const safeIndex = activeIndex === -1 ? 0 : activeIndex;
-  const ActiveIcon = tabs[safeIndex].icon;
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 pb-safe pointer-events-none select-none">
-      <div className="max-w-md mx-auto relative pointer-events-auto">
-        {/* Solid White Navigation Bar Surface */}
-        <div className="bg-white border-t border-slate-200/80 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] h-[62px] relative">
+    <nav className="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200/80 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] select-none">
+      {/* Safe Area Container: White background extends all the way to bottom of phone screen */}
+      <div className="max-w-md mx-auto relative pb-safe">
+        <div className="h-[58px] relative">
           
-          {/* Fluid Sliding Curved Dome + Elevated Circular Ring */}
+          {/* Sliding Circular Ring & Curved Wings Indicator */}
           <div
-            className="absolute -top-[18px] left-0 w-1/5 flex flex-col items-center pointer-events-none transition-transform duration-350 ease-[cubic-bezier(0.34,1.4,0.64,1)] z-10"
+            className="absolute -top-[14px] left-0 w-1/5 flex flex-col items-center pointer-events-none transition-transform duration-350 ease-[cubic-bezier(0.34,1.4,0.64,1)] z-10"
             style={{
               transform: `translate3d(${safeIndex * 100}%, 0, 0)`,
             }}
           >
-            {/* White Bezier Dome Wings (Seamless transition from the flat bar to the circular dome) */}
-            <svg
-              className="w-[92px] h-[22px] absolute top-0 text-white fill-current pointer-events-none drop-shadow-[0_-1px_1px_rgba(0,0,0,0.03)]"
-              viewBox="0 0 100 24"
-              preserveAspectRatio="none"
-            >
-              <path d="M0 24 C16 24, 22 8, 32 3 C 42 -1, 58 -1, 68 3 C 78 8, 84 24, 100 24 Z" />
-            </svg>
+            <div className="relative flex items-center justify-center">
+              {/* Left Concave Wing (Mathematical Bezier Fillet) */}
+              <svg
+                className="w-4 h-4 absolute -left-3.5 bottom-[4px] text-white fill-current pointer-events-none drop-shadow-[0_-1px_1px_rgba(0,0,0,0.03)]"
+                viewBox="0 0 16 16"
+              >
+                <path d="M0 16 C6 16, 12 10, 16 0 L16 16 Z" />
+              </svg>
 
-            {/* Elevated Circle with Black Border (Matching Reference Video) */}
-            <div className="w-[48px] h-[48px] rounded-full bg-white border-[2.5px] border-slate-900 shadow-sm flex items-center justify-center relative z-20 mt-[1px]">
-              <ActiveIcon className="w-5 h-5 text-slate-900 stroke-[2.2]" />
+              {/* Elevated Circle with Black Border matching reference video */}
+              <div className="w-[44px] h-[44px] rounded-full bg-white border-[2.5px] border-slate-900 shadow-sm flex items-center justify-center relative z-20" />
 
-              {/* Active Badge on Circle for Orders */}
-              {tabs[safeIndex].id === "orders" && Boolean(activeOrderCount && activeOrderCount > 0) && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] font-bold flex items-center justify-center shadow-xs">
-                  {activeOrderCount}
-                </span>
-              )}
+              {/* Right Concave Wing (Mathematical Bezier Fillet) */}
+              <svg
+                className="w-4 h-4 absolute -right-3.5 bottom-[4px] text-white fill-current pointer-events-none drop-shadow-[0_-1px_1px_rgba(0,0,0,0.03)]"
+                viewBox="0 0 16 16"
+              >
+                <path d="M0 0 C4 10, 10 16, 16 16 L0 16 Z" />
+              </svg>
             </div>
           </div>
 
@@ -84,33 +83,37 @@ export const NavigationBottom: React.FC<NavigationBottomProps> = ({
                     triggerHaptic(10);
                     onSelectTab(tab.id);
                   }}
-                  className="relative flex flex-col items-center justify-end pb-2 pt-1 h-full tap-depress outline-none"
+                  className="relative flex flex-col items-center justify-center h-full tap-depress outline-none"
                   aria-label={tab.label}
                 >
-                  {/* Inactive Icon (Fades out when active so the icon inside the elevated circle takes over) */}
+                  {/* Tab Icon: Smoothly lifts directly into the center of the circular ring when active */}
                   <div
-                    className={`transition-all duration-200 flex items-center justify-center mb-1 relative ${
+                    className={`relative transition-all duration-300 ease-[cubic-bezier(0.34,1.3,0.64,1)] flex items-center justify-center ${
                       isActive
-                        ? "opacity-0 scale-75 pointer-events-none"
-                        : "opacity-100 scale-100 text-slate-400 hover:text-slate-600"
+                        ? "-translate-y-3.5 text-slate-900 scale-105 z-30"
+                        : "translate-y-0 text-slate-400 hover:text-slate-600 scale-100"
                     }`}
                   >
-                    <Icon className="w-5 h-5 stroke-[1.8]" />
+                    <Icon className="w-5 h-5 stroke-[2]" />
 
-                    {/* Inactive Orders Badge */}
-                    {!isActive && tab.id === "orders" && Boolean(activeOrderCount && activeOrderCount > 0) && (
-                      <span className="absolute -top-1 -right-2 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] font-bold flex items-center justify-center animate-pulse shadow-xs">
-                        {activeOrderCount}
+                    {/* Orders Badge: stays firmly attached to the Orders icon */}
+                    {Boolean(tab.badgeCount && tab.badgeCount > 0) && (
+                      <span
+                        className={`absolute -top-1 -right-2 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] font-bold flex items-center justify-center shadow-xs transition-transform ${
+                          isActive ? "scale-90" : "animate-pulse"
+                        }`}
+                      >
+                        {tab.badgeCount}
                       </span>
                     )}
                   </div>
 
-                  {/* Tab Label */}
+                  {/* Tab Label: snugly placed right beneath the circle with NO awkward gap */}
                   <span
-                    className={`text-[10px] tracking-tight transition-colors duration-200 select-none ${
+                    className={`text-[10px] tracking-tight transition-all duration-200 select-none mt-0.5 ${
                       isActive
-                        ? "text-slate-900 font-extrabold"
-                        : "text-slate-400 font-medium"
+                        ? "text-slate-900 font-extrabold translate-y-[-2px]"
+                        : "text-slate-400 font-medium translate-y-0"
                     }`}
                   >
                     {tab.label}
