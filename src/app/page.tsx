@@ -1,0 +1,372 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { Header } from "@/components/Header";
+import { StoriesCarousel } from "@/components/StoriesCarousel";
+import { CategoryTabs, CategoryFilter } from "@/components/CategoryTabs";
+import { ProductCard } from "@/components/ProductCard";
+import { AuctionDrawer } from "@/components/AuctionDrawer";
+import { CheckoutDrawer } from "@/components/CheckoutDrawer";
+import { OrdersView } from "@/components/OrdersView";
+import { SellerStudio } from "@/components/SellerStudio";
+import { RiderPortal } from "@/components/RiderPortal";
+import { NavigationBottom, NavTab } from "@/components/NavigationBottom";
+import { FeedbackModal } from "@/components/FeedbackModal";
+import { mockProducts, mockStories } from "@/data/mockProducts";
+import { ProductItem } from "@/types";
+import { triggerHaptic, formatINR } from "@/lib/utils";
+import {
+  Flame,
+  ShieldCheck,
+  Bike,
+  Sparkles,
+  Phone,
+  MessageCircle,
+  Clock,
+  ArrowRight,
+  MapPin,
+  CheckCircle2,
+  Package,
+  Layers,
+} from "lucide-react";
+
+export default function Home() {
+  const [currentTab, setCurrentTab] = useState<NavTab>("store");
+  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("all");
+  const [selectedDistrict, setSelectedDistrict] = useState("Imphal West");
+  const [cartCount, setCartCount] = useState(1);
+  const [activeOrderCount, setActiveOrderCount] = useState(1);
+  const [showRiderPortal, setShowRiderPortal] = useState(false);
+  const [districtModalOpen, setDistrictModalOpen] = useState(false);
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+
+  // Drawers
+  const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
+  const [auctionDrawerOpen, setAuctionDrawerOpen] = useState(false);
+  const [checkoutDrawerOpen, setCheckoutDrawerOpen] = useState(false);
+
+  // Filter products based on tab and category
+  const filteredProducts = mockProducts.filter((product) => {
+    // If on "drops" tab, only show active auctions / drops
+    if (currentTab === "drops") {
+      if (!product.isAuction || product.isSoldOut) return false;
+    }
+
+    if (selectedCategory === "all") return true;
+    return product.category === selectedCategory;
+  });
+
+  const handleOpenProduct = (product: ProductItem) => {
+    setSelectedProduct(product);
+    if (product.isAuction) {
+      setAuctionDrawerOpen(true);
+    } else {
+      setCheckoutDrawerOpen(true);
+    }
+  };
+
+  const handleQuickBid = (product: ProductItem) => {
+    setSelectedProduct(product);
+    setAuctionDrawerOpen(true);
+  };
+
+  const handleAddToCart = (product: ProductItem) => {
+    setCartCount((prev) => prev + 1);
+    setSelectedProduct(product);
+    setCheckoutDrawerOpen(true);
+  };
+
+  const handleOrderSuccess = (orderId: string) => {
+    setCheckoutDrawerOpen(false);
+    setActiveOrderCount((prev) => prev + 1);
+    setCurrentTab("orders");
+  };
+
+  return (
+    <div className="flex-1 flex flex-col pb-20">
+      {/* Top App Header */}
+      <Header
+        cartCount={cartCount}
+        onCartClick={() => {
+          setSelectedProduct(mockProducts[0]);
+          setCheckoutDrawerOpen(true);
+        }}
+        selectedDistrict={selectedDistrict}
+        onLocationClick={() => setDistrictModalOpen(true)}
+      />
+
+      {/* District / Delivery Hub Selector Modal */}
+      {districtModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-4">
+          <div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-rose-600" />
+                <h3 className="font-bold text-slate-900 text-base">Select Delivery Hub</h3>
+              </div>
+              <button
+                onClick={() => setDistrictModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 font-bold text-lg"
+              >
+                ✕
+              </button>
+            </div>
+            <p className="text-xs text-slate-500">
+              Imphal Core offers 24-hr gig delivery. Outer districts route through PUDO partner shops or Winger counters.
+            </p>
+            <div className="space-y-2">
+              {[
+                { name: "Imphal West", type: "Core Hub (24-hr Doorstep ₹50)" },
+                { name: "Imphal East", type: "Core Hub (24-hr Doorstep ₹50)" },
+                { name: "Thoubal", type: "PUDO Hub (Thoubal Bazar Shop)" },
+                { name: "Bishnupur", type: "PUDO Hub (Nambol / Moirang Bazar)" },
+                { name: "Kakching", type: "PUDO Hub (Kakching Bazar Shop)" },
+                { name: "Churachandpur", type: "Winger Counter (Khuman Lampak)" },
+                { name: "Ukhrul", type: "Winger Counter (ISBT / Deulahland)" },
+                { name: "Senapati", type: "Winger Counter (North Gate)" },
+              ].map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => {
+                    setSelectedDistrict(item.name);
+                    triggerHaptic(10);
+                    setDistrictModalOpen(false);
+                  }}
+                  className={`w-full text-left p-3 rounded-xl border flex items-center justify-between transition-colors ${
+                    selectedDistrict === item.name
+                      ? "border-rose-600 bg-rose-50/50 text-rose-900 font-bold"
+                      : "border-slate-100 hover:bg-slate-50 text-slate-700"
+                  }`}
+                >
+                  <div>
+                    <div className="text-sm">{item.name}</div>
+                    <div className="text-[11px] text-slate-400 font-normal">{item.type}</div>
+                  </div>
+                  {selectedDistrict === item.name && (
+                    <CheckCircle2 className="w-4 h-4 text-rose-600 shrink-0" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* VIEW: Rider Portal Mode Toggle */}
+      {showRiderPortal ? (
+        <div>
+          <div className="p-3 bg-slate-900 text-white flex items-center justify-between">
+            <span className="text-xs font-semibold flex items-center gap-1.5">
+              <Bike className="w-4 h-4 text-rose-400" />
+              Rider Dispatch Preview Mode
+            </span>
+            <button
+              onClick={() => setShowRiderPortal(false)}
+              className="text-xs bg-white/20 px-2.5 py-1 rounded-md hover:bg-white/30 font-medium"
+            >
+              Back to Store
+            </button>
+          </div>
+          <RiderPortal />
+        </div>
+      ) : (
+        <>
+          {/* TAB 1: STORE / TAB 2: LIVE DROPS */}
+          {(currentTab === "store" || currentTab === "drops") && (
+            <div className="space-y-3">
+              {/* Stories Carousel */}
+              <StoriesCarousel
+                stories={mockStories}
+                onSelectStoryProduct={(productId) => {
+                  const p = mockProducts.find((item) => item.id === productId);
+                  if (p) handleOpenProduct(p);
+                }}
+              />
+
+              {/* Sunday Drop Banner for Live Drops */}
+              {currentTab === "drops" && (
+                <div className="mx-4 p-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-700 text-white shadow-md relative overflow-hidden">
+                  <div className="relative z-10 flex items-start justify-between">
+                    <div>
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300 uppercase tracking-wide">
+                        <Flame className="w-4 h-4" /> Live Drop Stream
+                      </div>
+                      <h2 className="text-lg font-black tracking-tight mt-0.5">Sunday 8:00 PM Drop</h2>
+                      <p className="text-xs text-white/90 mt-1 max-w-[260px]">
+                        Anti-sniping soft close active. Zero-troll WhatsApp anti-Sybil verified bidders only.
+                      </p>
+                    </div>
+                    <div className="bg-black/30 backdrop-blur-xs rounded-xl px-2.5 py-1.5 text-center border border-white/10 shrink-0">
+                      <span className="text-[10px] uppercase font-bold text-white/70 block">Time Left</span>
+                      <span className="text-sm font-black text-white">01h 42m</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Category Filter Tabs */}
+              <CategoryTabs
+                selected={selectedCategory}
+                onSelect={(cat) => setSelectedCategory(cat)}
+              />
+
+              {/* Verified Anti-Counterfeit Guarantee Micro-Pill */}
+              <div className="mx-4 py-2 px-3 rounded-xl bg-slate-100/90 border border-slate-200/60 flex items-center justify-between text-xs text-slate-700">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  Lookmai Escrow: 48h Inspection Window
+                </span>
+                <span className="text-[11px] text-slate-500 font-semibold">Zero Dropshippers</span>
+              </div>
+
+              {/* Product Grid */}
+              <div className="px-4 grid grid-cols-2 gap-3 pb-6">
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onOpenDetails={handleOpenProduct}
+                    onQuickBid={handleQuickBid}
+                    onAddToCart={handleAddToCart}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: SELLER STUDIO (60s Listing) */}
+          {currentTab === "sell" && <SellerStudio />}
+
+          {/* TAB 4: ORDERS VIEW (OTP & Tracking) */}
+          {currentTab === "orders" && <OrdersView />}
+
+          {/* TAB 5: PROFILE VIEW */}
+          {currentTab === "profile" && (
+            <div className="p-4 space-y-4 max-w-md mx-auto pb-24">
+              <div className="flex items-center gap-3.5 bg-white p-4 rounded-2xl border border-slate-100 shadow-xs">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-rose-500 to-red-600 flex items-center justify-center text-white font-extrabold text-xl shadow-xs">
+                  BD
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <h2 className="text-base font-bold text-slate-900">Bembem Devi</h2>
+                    <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 flex items-center gap-0.5">
+                      <CheckCircle2 className="w-2.5 h-2.5" /> Verified
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500">+91 98620 ••••• (WhatsApp Inbound Linked)</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Yaiskul Leirak, Imphal West</p>
+                </div>
+              </div>
+
+              {/* Operational Tools Section */}
+              <div className="space-y-2">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider px-1">
+                  Founder Operations & Logistics
+                </span>
+
+                <Link
+                  href="/admin"
+                  className="w-full bg-slate-900 text-white p-3.5 rounded-xl font-bold text-xs flex items-center justify-between hover:bg-slate-800 transition-colors shadow-sm"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <ShieldCheck className="w-4 h-4 text-rose-500" />
+                    <span>Lookmai Escrow Hub (Dispute Arbitration & Payouts)</span>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-slate-400" />
+                </Link>
+
+                <Link
+                  href="/rider"
+                  className="w-full bg-slate-800 text-white p-3.5 rounded-xl font-bold text-xs flex items-center justify-between hover:bg-slate-700 transition-colors shadow-sm"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Bike className="w-4 h-4 text-rose-400" />
+                    <span>Launch Dedicated Rider Web App (/rider)</span>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-slate-400" />
+                </Link>
+
+                <button
+                  onClick={() => setFeedbackModalOpen(true)}
+                  className="w-full bg-white text-slate-700 border border-slate-200 p-3 rounded-xl font-bold text-xs flex items-center justify-between hover:bg-slate-50 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    <span>Report Bug / Device Feedback (Sentry Vitals)</span>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-slate-400" />
+                </button>
+              </div>
+
+              {/* Entity & Trust Section */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                  Legal & Entity Transparency
+                </span>
+                <div className="text-xs text-slate-700 space-y-1">
+                  <p className="font-semibold text-slate-900">Shinyen (ꯁꯤꯟꯌꯦꯟ) Market Network</p>
+                  <p>Operated by: <span className="font-medium text-slate-900">LOOKMAI</span> (Sole Proprietorship)</p>
+                  <p>MSME Registration: <span className="font-mono text-[11px] bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-semibold">UDYAM-MN-05-0036092</span></p>
+                  <p>Registered Address: Yaiskul Leirak, Imphal West, Manipur - 795001</p>
+                  <p className="text-[11px] text-slate-500 pt-1 border-t border-slate-200">
+                    Named after King Loiyumba’s historic edict <em>Loiyumba Shinyen</em> (1110–1122 CE), organizing the indigenous artisanal professions of Manipur.
+                  </p>
+                </div>
+              </div>
+
+              {/* Quick Contact & WhatsApp Support */}
+              <a
+                href="https://wa.me/919862000000"
+                target="_blank"
+                rel="noreferrer"
+                className="w-full flex items-center justify-center gap-2 p-3 rounded-xl border border-emerald-500/30 bg-emerald-50/50 text-emerald-800 text-xs font-bold hover:bg-emerald-100 transition-colors"
+              >
+                <MessageCircle className="w-4 h-4 text-emerald-600" />
+                Contact Lookmai Founder Concierge (WhatsApp)
+              </a>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Fixed Bottom Navigation */}
+      <NavigationBottom
+        currentTab={currentTab}
+        onSelectTab={(tab) => {
+          setShowRiderPortal(false);
+          setCurrentTab(tab);
+        }}
+        activeOrderCount={activeOrderCount}
+      />
+
+      {/* Live Auction Pull-Up Drawer */}
+      <AuctionDrawer
+        product={selectedProduct}
+        isOpen={auctionDrawerOpen}
+        onClose={() => setAuctionDrawerOpen(false)}
+        onBidPlaced={(amount) => {
+          if (selectedProduct) {
+            selectedProduct.currentBid = amount;
+            selectedProduct.bidCount = (selectedProduct.bidCount || 0) + 1;
+          }
+        }}
+      />
+
+      {/* Manipur Reality Checkout Drawer */}
+      <CheckoutDrawer
+        product={selectedProduct}
+        isOpen={checkoutDrawerOpen}
+        onClose={() => setCheckoutDrawerOpen(false)}
+        onOrderSuccess={handleOrderSuccess}
+      />
+
+      {/* Sentry Device Diagnostics & User Feedback Modal */}
+      <FeedbackModal
+        isOpen={feedbackModalOpen}
+        onClose={() => setFeedbackModalOpen(false)}
+      />
+    </div>
+  );
+}
