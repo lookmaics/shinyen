@@ -61,10 +61,34 @@ export interface ProductItem {
   createdAt: string;
 }
 
+export interface StoryShowcaseItem {
+  id: string;
+  productId: string;
+  name: string;
+  dimensionLabel: string; // e.g. "23 × 26 in" or "Silk Zari"
+  price: number;
+  thumbnailUrl: string;
+  badgeText?: string;
+}
+
+export interface StoryThemeConfig {
+  id: "mint" | "violet" | "amber" | "rose";
+  blobStart: string;
+  blobEnd: string;
+  accentHex: string;
+  softBgHex: string;
+  orbPrimary: string;
+  orbSecondary: string;
+  textTint: string;
+  svgPath: string;
+}
+
 export interface BoutiqueStory {
   id: string;
   sellerId: string;
   sellerHandle: string;
+  sellerName?: string;
+  sellerLocation?: string;
   sellerAvatar: string;
   mediaUrl: string;
   type: "new_drop" | "live_auction" | "artisan_craft";
@@ -72,6 +96,12 @@ export interface BoutiqueStory {
   productId?: string;
   ctaText?: string;
   hasUnseen?: boolean;
+  // 3D Orbital Showcase Extensions
+  heroDisplayLines?: [string, string]; // e.g. ["Rani", "Phi"]
+  vaultTitle?: string; // e.g. "Artisan Loom"
+  floatingTag?: string; // e.g. "Fly-Shuttle Silk"
+  theme?: StoryThemeConfig;
+  showcaseItems?: StoryShowcaseItem[];
 }
 
 export interface BidRecord {
