@@ -19,6 +19,7 @@ import {
   Check,
   AlertTriangle,
   Wifi,
+  Download,
 } from "lucide-react";
 
 export default function RiderDispatchPage() {
@@ -30,6 +31,45 @@ export default function RiderDispatchPage() {
   const [deliverySuccess, setDeliverySuccess] = useState(false);
   const [pickupConfirmed, setPickupConfirmed] = useState(false);
   const [otpError, setOtpError] = useState<string | null>(null);
+
+  // PWA Home Screen Installation state
+  const [isPwaInstalled, setIsPwaInstalled] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handleBeforeInstall = (e: any) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handleBeforeInstall);
+
+    if (
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true
+    ) {
+      setIsPwaInstalled(true);
+    }
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    triggerHaptic(12);
+    if (installPrompt) {
+      installPrompt.prompt();
+      const choice = await installPrompt.userChoice;
+      if (choice.outcome === "accepted") {
+        setIsPwaInstalled(true);
+      }
+      setInstallPrompt(null);
+    } else {
+      alert(
+        "To install Lookmai Rider App:\n\n1. Tap the Share button (or browser menu ⋮)\n2. Select 'Add to Home Screen'\n\nThis gives you instant 1-tap dispatch access and offline routes!"
+      );
+    }
+  };
 
   // Stop 1 Delivery Details (Cached in localStorage for offline dead zones)
   const deliveryStop = {
@@ -144,19 +184,33 @@ export default function RiderDispatchPage() {
           </div>
         </div>
 
-        <button
-          onClick={() => {
-            triggerHaptic(10);
-            setIsOnline((prev) => !prev);
-          }}
-          className={`px-2.5 py-1 rounded-full text-[11px] font-bold border transition-all ${
-            isOnline
-              ? "bg-emerald-950 text-emerald-400 border-emerald-600/50"
-              : "bg-slate-800 text-slate-400 border-slate-700"
-          }`}
-        >
-          {isOnline ? "● Online" : "○ Offline"}
-        </button>
+        {/* Actions: Install App & Online Status */}
+        <div className="flex items-center gap-2">
+          {!isPwaInstalled && (
+            <button
+              onClick={handleInstallClick}
+              className="flex items-center gap-1 text-[11px] font-bold text-rose-400 bg-rose-950/80 border border-rose-600/60 px-2.5 py-1 rounded-full hover:bg-rose-900/60 tap-depress transition-all shadow-xs"
+              title="Install Lookmai Rider to Home Screen"
+            >
+              <Download className="w-3 h-3 text-rose-400" />
+              <span>Install App</span>
+            </button>
+          )}
+
+          <button
+            onClick={() => {
+              triggerHaptic(10);
+              setIsOnline((prev) => !prev);
+            }}
+            className={`px-2.5 py-1 rounded-full text-[11px] font-bold border transition-all ${
+              isOnline
+                ? "bg-emerald-950 text-emerald-400 border-emerald-600/50"
+                : "bg-slate-800 text-slate-400 border-slate-700"
+            }`}
+          >
+            {isOnline ? "● Online" : "○ Offline"}
+          </button>
+        </div>
       </div>
 
       {/* Rider Identity & Today's Earnings Bar */}
