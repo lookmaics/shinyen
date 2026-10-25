@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { mockProducts } from "@/data/mockProducts";
@@ -8,6 +8,7 @@ import { ProductItem } from "@/types";
 import { formatINR, triggerHaptic } from "@/lib/utils";
 import { AuctionDrawer } from "@/components/AuctionDrawer";
 import { CheckoutDrawer } from "@/components/CheckoutDrawer";
+import { FullScreenImageViewer } from "@/components/FullScreenImageViewer";
 import {
   ArrowLeft,
   Share2,
@@ -22,6 +23,7 @@ import {
   ShoppingBag,
   MapPin,
   ExternalLink,
+  Maximize2,
 } from "lucide-react";
 
 export default function ProductDetailPage() {
@@ -35,9 +37,27 @@ export default function ProductDetailPage() {
   const [sharedToast, setSharedToast] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>("");
 
-  // Drawers
+  // Drawers & Lightbox
   const [auctionDrawerOpen, setAuctionDrawerOpen] = useState(false);
   const [checkoutDrawerOpen, setCheckoutDrawerOpen] = useState(false);
+  const [fullScreenViewerOpen, setFullScreenViewerOpen] = useState(false);
+
+  // Gallery swipe handling on mobile
+  const touchStartX = useRef(0);
+  const handleGalleryTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleGalleryTouchEnd = (e: React.TouchEvent) => {
+    if (!product || product.images.length <= 1) return;
+    const diff = e.changedTouches[0].clientX - touchStartX.current;
+    if (diff < -40 && selectedImageIndex < product.images.length - 1) {
+      triggerHaptic(6);
+      setSelectedImageIndex((prev) => prev + 1);
+    } else if (diff > 40 && selectedImageIndex > 0) {
+      triggerHaptic(6);
+      setSelectedImageIndex((prev) => prev - 1);
+    }
+  };
 
   useEffect(() => {
     const found = mockProducts.find((p) => p.id === productId);
@@ -160,28 +180,54 @@ export default function ProductDetailPage() {
         </div>
       )}
 
-      {/* Main Image Gallery */}
-      <div className="relative w-full aspect-4/5 bg-slate-100 overflow-hidden">
+      {/* Main Image Gallery (Swipeable + Tap to open Full Screen) */}
+      <div
+        className="relative w-full aspect-4/5 bg-slate-900 overflow-hidden cursor-zoom-in select-none group"
+        onTouchStart={handleGalleryTouchStart}
+        onTouchEnd={handleGalleryTouchEnd}
+        onClick={() => {
+          triggerHaptic(8);
+          setFullScreenViewerOpen(true);
+        }}
+      >
         <img
+          key={selectedImageIndex}
           src={product.images[selectedImageIndex] || product.images[0]}
           alt={product.title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover animate-in fade-in duration-200"
         />
+
+        {/* Full Screen Badge Trigger */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            triggerHaptic(8);
+            setFullScreenViewerOpen(true);
+          }}
+          className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/85 hover:bg-slate-900 text-white text-[11px] font-bold shadow-lg backdrop-blur-md border border-white/10 tap-depress"
+          aria-label="View photo in full screen"
+        >
+          <Maximize2 className="w-3.5 h-3.5 text-white" />
+          <span>Full Screen</span>
+        </button>
+
+        {/* Photo Counter Pill */}
+        {product.images.length > 1 && (
+          <div className="absolute bottom-3 left-3 z-10 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-bold border border-white/10">
+            {selectedImageIndex + 1} / {product.images.length}
+          </div>
+        )}
 
         {/* Thumbnail Selector Dots / Bar */}
         {product.images.length > 1 && (
-          <div className="absolute bottom-3 inset-x-0 flex items-center justify-center gap-1.5 z-10">
+          <div className="absolute bottom-3 inset-x-0 flex items-center justify-center gap-1.5 z-10 pointer-events-none">
             {product.images.map((_, idx) => (
-              <button
+              <span
                 key={idx}
-                onClick={() => {
-                  triggerHaptic(5);
-                  setSelectedImageIndex(idx);
-                }}
-                className={`w-2 h-2 rounded-full transition-all ${
+                className={`h-1.5 rounded-full transition-all duration-200 ${
                   selectedImageIndex === idx
                     ? "w-5 bg-white shadow-xs"
-                    : "bg-white/60 hover:bg-white/90"
+                    : "w-1.5 bg-white/50"
                 }`}
               />
             ))}
@@ -196,6 +242,32 @@ export default function ProductDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Quick Thumbnail Strip (Tap to switch image) */}
+      {product.images.length > 1 && (
+        <div className="px-4 pt-2.5 flex items-center gap-2 overflow-x-auto scrollbar-none">
+          {product.images.map((img, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                triggerHaptic(6);
+                setSelectedImageIndex(idx);
+              }}
+              className={`relative w-14 h-16 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
+                selectedImageIndex === idx
+                  ? "border-rose-600 scale-102 shadow-sm shadow-rose-200"
+                  : "border-slate-200/80 opacity-70 hover:opacity-100"
+              }`}
+            >
+              <img
+                src={img}
+                alt={`Angle ${idx + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Content Container */}
       <div className="p-4 space-y-4">
@@ -415,6 +487,18 @@ export default function ProductDetailPage() {
           setCheckoutDrawerOpen(false);
           router.push("/");
         }}
+      />
+
+      {/* Full-Screen Immersive Photo Lightbox */}
+      <FullScreenImageViewer
+        isOpen={fullScreenViewerOpen}
+        onClose={() => setFullScreenViewerOpen(false)}
+        images={product.images}
+        initialIndex={selectedImageIndex}
+        title={product.title}
+        sellerHandle={product.seller.handle}
+        hasFlaw={product.hasFlaw}
+        flawNote={product.flawNote}
       />
     </div>
   );

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { ProductItem } from "@/types";
 import { formatINR, triggerHaptic } from "@/lib/utils";
-import { Flame, CheckCircle, ShieldCheck, Ruler, Clock, ArrowRight, Bell, Check } from "lucide-react";
+import { Flame, CheckCircle, ShieldCheck, Ruler, Clock, ArrowRight, Bell, Check, Images } from "lucide-react";
 
 interface ProductCardProps {
   product: ProductItem;
@@ -98,6 +98,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {product.hasFlaw && (
           <div className="absolute bottom-2 inset-x-2 bg-amber-500/90 backdrop-blur-md text-white px-2 py-0.5 rounded-md text-[10px] font-semibold truncate">
             Note: Disclosed minor flaw in photos
+          </div>
+        )}
+
+        {/* Multi-photo indicator if more than 1 image */}
+        {product.images.length > 1 && !product.hasFlaw && (
+          <div className="absolute bottom-2.5 right-2.5 z-10 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-white text-[9px] font-bold flex items-center gap-1 pointer-events-none">
+            <Images className="w-3 h-3 text-white/90" />
+            <span>{product.images.length}</span>
           </div>
         )}
       </div>

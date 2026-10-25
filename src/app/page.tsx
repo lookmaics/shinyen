@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Header } from "@/components/Header";
 import { StoriesCarousel } from "@/components/StoriesCarousel";
 import { CategoryTabs, CategoryFilter } from "@/components/CategoryTabs";
@@ -33,6 +34,7 @@ import {
 } from "lucide-react";
 
 export default function Home() {
+  const router = useRouter();
   const [currentTab, setCurrentTab] = useState<NavTab>("store");
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("all");
   const [selectedDistrict, setSelectedDistrict] = useState("Imphal West");
@@ -157,12 +159,8 @@ export default function Home() {
   });
 
   const handleOpenProduct = (product: ProductItem) => {
-    setSelectedProduct(product);
-    if (product.isAuction) {
-      setAuctionDrawerOpen(true);
-    } else {
-      setCheckoutDrawerOpen(true);
-    }
+    triggerHaptic(8);
+    router.push(`/p/${product.id}`);
   };
 
   const handleQuickBid = (product: ProductItem) => {
