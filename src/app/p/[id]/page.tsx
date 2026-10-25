@@ -24,18 +24,30 @@ import {
   MapPin,
   ExternalLink,
   Maximize2,
+  Plus,
 } from "lucide-react";
+import { useCart } from "@/hooks/useCart";
 
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const productId = params?.id as string;
+  const { addToCart } = useCart();
 
   const [product, setProduct] = useState<ProductItem | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isFollowing, setIsFollowing] = useState(false);
   const [sharedToast, setSharedToast] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>("");
+  const [addedToCart, setAddedToCart] = useState(false);
+
+  const handleAddToCartClick = () => {
+    if (!product) return;
+    triggerHaptic(12);
+    addToCart(product);
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 1600);
+  };
 
   // Drawers & Lightbox
   const [auctionDrawerOpen, setAuctionDrawerOpen] = useState(false);
@@ -445,20 +457,42 @@ export default function ProductDetailPage() {
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <div className="shrink-0">
               <span className="text-[10px] uppercase font-bold text-slate-400 block">Price</span>
               <span className="text-base font-black text-slate-900">{formatINR(product.price)}</span>
             </div>
+
+            <button
+              onClick={handleAddToCartClick}
+              className={`py-3 px-3.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-xs tap-depress transition-all ${
+                addedToCart
+                  ? "bg-emerald-600 text-white shadow-emerald-200"
+                  : "bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80"
+              }`}
+            >
+              {addedToCart ? (
+                <>
+                  <Check className="w-4 h-4 text-white" />
+                  <span>Added</span>
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4 text-rose-600" />
+                  <span>+ Cart</span>
+                </>
+              )}
+            </button>
+
             <button
               onClick={() => {
                 triggerHaptic(15);
                 setCheckoutDrawerOpen(true);
               }}
-              className="flex-1 py-3 bg-slate-900 text-white font-extrabold text-sm rounded-xl flex items-center justify-center gap-2 shadow-lg tap-depress transition-all hover:bg-slate-800"
+              className="flex-1 py-3 bg-slate-900 text-white font-extrabold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-1.5 shadow-lg tap-depress transition-all hover:bg-slate-800"
             >
               <ShoppingBag className="w-4 h-4" />
-              <span>Instant Checkout (UPI)</span>
+              <span>Instant Buy</span>
             </button>
           </div>
         )}

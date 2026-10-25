@@ -25,8 +25,14 @@ import {
   Info,
 } from "lucide-react";
 
+export interface CheckoutItem {
+  product: ProductItem;
+  quantity: number;
+}
+
 interface CheckoutDrawerProps {
-  product: ProductItem | null;
+  product?: ProductItem | null;
+  cartItems?: CheckoutItem[];
   isOpen: boolean;
   onClose: () => void;
   onOrderSuccess: (orderId: string) => void;
@@ -34,6 +40,7 @@ interface CheckoutDrawerProps {
 
 export const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
   product,
+  cartItems,
   isOpen,
   onClose,
   onOrderSuccess,
@@ -72,15 +79,29 @@ export const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
     }
   }, [district]);
 
-  if (!product) return null;
+  const activeItems: CheckoutItem[] =
+    cartItems && cartItems.length > 0
+      ? cartItems
+      : product
+      ? [{ product, quantity: 1 }]
+      : [];
+
+  if (activeItems.length === 0) return null;
 
   const currentDeliveryOption =
     deliveryOptions.find((o) => o.id === selectedDeliveryMethod) || deliveryOptions[0];
   const deliveryFee = currentDeliveryOption?.fee || 50;
-  const totalAmount = product.price + deliveryFee;
 
-  // Platform fee calculation
-  const { platformFeeAmount } = calculatePlatformFee(product.price, product.category);
+  const itemsSubtotal = activeItems.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0
+  );
+  const totalItemsCount = activeItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalAmount = itemsSubtotal + deliveryFee;
+
+  // Platform fee calculation using primary product
+  const primaryProduct = activeItems[0].product;
+  const { platformFeeAmount } = calculatePlatformFee(itemsSubtotal, primaryProduct.category);
 
   // Filter leikais based on search and district
   const filteredLeikais = leikaisData.filter(
@@ -119,8 +140,8 @@ export const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          productId: product.id,
-          sellerId: product.sellerId,
+          productId: primaryProduct.id,
+          sellerId: primaryProduct.sellerId,
           buyerName: "Bembem Devi",
           phone,
           district,
@@ -131,9 +152,10 @@ export const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
           lng: gpsCoords?.lng,
           deliveryMethod: selectedDeliveryMethod,
           deliveryFee,
-          itemAmount: product.price,
+          itemAmount: itemsSubtotal,
           platformFee: platformFeeAmount,
           upiApp,
+          itemsCount: totalItemsCount,
         }),
       });
 
@@ -186,21 +208,59 @@ export const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
                 </button>
               </div>
 
-              {/* Product Summary */}
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
-                <img
-                  src={product.images[0]}
-                  alt={product.title}
-                  className="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-xs font-bold text-slate-900 truncate">{product.title}</h4>
-                  <span className="text-[11px] text-slate-500 block">From @{product.seller.handle}</span>
-                  <span className="text-xs font-extrabold text-slate-900 mt-0.5 block">
-                    {formatINR(product.price)}
-                  </span>
+              {/* Product(s) Summary */}
+              {activeItems.length > 1 ? (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs font-bold text-slate-700 px-1">
+                    <span>Order Items ({totalItemsCount})</span>
+                    <span className="text-slate-500 font-medium">{formatINR(itemsSubtotal)}</span>
+                  </div>
+                  <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                    {activeItems.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-50 border border-slate-100"
+                      >
+                        <img
+                          src={item.product.images[0]}
+                          alt={item.product.title}
+                          className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-xs font-bold text-slate-900 truncate">
+                            {item.product.title}
+                          </h4>
+                          <span className="text-[10px] text-slate-500 block">
+                            @{item.product.seller.handle} • {item.product.sizeTag}
+                          </span>
+                          <span className="text-xs font-extrabold text-slate-900 mt-0.5 block">
+                            {formatINR(item.product.price)} {item.quantity > 1 ? `× ${item.quantity}` : ""}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                  <img
+                    src={primaryProduct.images[0]}
+                    alt={primaryProduct.title}
+                    className="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-xs font-bold text-slate-900 truncate">
+                      {primaryProduct.title}
+                    </h4>
+                    <span className="text-[11px] text-slate-500 block">
+                      From @{primaryProduct.seller.handle} • {primaryProduct.sizeTag}
+                    </span>
+                    <span className="text-xs font-extrabold text-slate-900 mt-0.5 block">
+                      {formatINR(primaryProduct.price)}
+                    </span>
+                  </div>
+                </div>
+              )}
 
               {/* Manipur Reality Address Form */}
               <div className="space-y-3">
@@ -345,8 +405,10 @@ export const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
               {/* Bill Summary with Fee Transparency */}
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5 text-xs">
                 <div className="flex justify-between text-slate-600">
-                  <span>Item Subtotal</span>
-                  <span>{formatINR(product.price)}</span>
+                  <span>
+                    Items Subtotal ({totalItemsCount} {totalItemsCount === 1 ? "item" : "items"})
+                  </span>
+                  <span>{formatINR(itemsSubtotal)}</span>
                 </div>
                 <div className="flex justify-between text-slate-600">
                   <span>
@@ -409,7 +471,11 @@ export const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
           onClose={() => setConfirmedOrder(null)}
           orderCode={confirmedOrder.orderCode}
           deliveryOtp={confirmedOrder.deliveryOtp}
-          itemTitle={product.title}
+          itemTitle={
+            totalItemsCount > 1
+              ? `${totalItemsCount} Items (${primaryProduct.title} & others)`
+              : primaryProduct.title
+          }
           totalPaid={confirmedOrder.totalPaid}
           district={district}
           leikai={selectedLeikai}

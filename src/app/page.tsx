@@ -16,6 +16,7 @@ import { useModalBackstack, wasOverlayRecentlyClosed } from "@/hooks/useBackstac
 import { mockProducts, mockStories } from "@/data/mockProducts";
 import { ProductItem } from "@/types";
 import { triggerHaptic, formatINR } from "@/lib/utils";
+import { useCart } from "@/hooks/useCart";
 import {
   Flame,
   ShieldCheck,
@@ -37,7 +38,7 @@ export default function Home() {
   const [currentTab, setCurrentTab] = useState<NavTab>("store");
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("all");
   const [selectedDistrict, setSelectedDistrict] = useState("Imphal West");
-  const [cartCount, setCartCount] = useState(1);
+  const { cartCount, addToCart, clearCart } = useCart();
   const [activeOrderCount, setActiveOrderCount] = useState(1);
   const [districtModalOpen, setDistrictModalOpen] = useState(false);
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
@@ -164,7 +165,10 @@ export default function Home() {
   };
 
   const handleAddToCart = (product: ProductItem) => {
-    setCartCount((prev) => prev + 1);
+    addToCart(product);
+  };
+
+  const handleQuickBuy = (product: ProductItem) => {
     setSelectedProduct(product);
     setCheckoutDrawerOpen(true);
   };
@@ -181,8 +185,7 @@ export default function Home() {
       <Header
         cartCount={cartCount}
         onCartClick={() => {
-          setSelectedProduct(mockProducts[0]);
-          setCheckoutDrawerOpen(true);
+          handleSelectTab("orders");
         }}
         selectedDistrict={selectedDistrict}
         onLocationClick={() => setDistrictModalOpen(true)}
@@ -302,6 +305,7 @@ export default function Home() {
                     onOpenDetails={handleOpenProduct}
                     onQuickBid={handleQuickBid}
                     onAddToCart={handleAddToCart}
+                    onQuickBuy={handleQuickBuy}
                   />
                 ))}
               </div>
@@ -311,7 +315,7 @@ export default function Home() {
           {/* TAB 3: ORDERS VIEW (OTP & Real-Time Tracking) */}
           {currentTab === "orders" && (
             <div key="orders" className="tab-enter">
-              <OrdersView />
+              <OrdersView onExploreStore={() => handleSelectTab("store")} />
             </div>
           )}
 

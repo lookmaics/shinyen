@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { ProductItem } from "@/types";
 import { formatINR, triggerHaptic } from "@/lib/utils";
-import { Flame, CheckCircle, ShieldCheck, Ruler, Clock, ArrowRight, Bell, Check, Images } from "lucide-react";
+import { Flame, CheckCircle, ShieldCheck, Ruler, Clock, ArrowRight, Bell, Check, Images, Plus } from "lucide-react";
 
 interface ProductCardProps {
   product: ProductItem;
   onOpenDetails: (product: ProductItem) => void;
   onQuickBid?: (product: ProductItem) => void;
   onAddToCart?: (product: ProductItem) => void;
+  onQuickBuy?: (product: ProductItem) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -17,11 +18,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onOpenDetails,
   onQuickBid,
   onAddToCart,
+  onQuickBuy,
 }) => {
   // Live countdown timer for active auctions
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [isUrgent, setIsUrgent] = useState(false);
   const [reminded, setReminded] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(false);
+
+  const handleAddCartClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    triggerHaptic(12);
+    onAddToCart?.(product);
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 1400);
+  };
 
   useEffect(() => {
     if (!product.isAuction || !product.endTime) return;
@@ -186,17 +197,46 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               <span>Bid</span>
             </button>
           ) : (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                triggerHaptic(10);
-                onAddToCart?.(product);
-              }}
-              className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs flex items-center gap-1 shadow-xs tap-depress transition-all"
-            >
-              <span>Buy</span>
-              <ArrowRight className="w-3 h-3" />
-            </button>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                onClick={handleAddCartClick}
+                className={`px-2 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-xs tap-depress transition-all ${
+                  addedToCart
+                    ? "bg-emerald-600 text-white shadow-emerald-200"
+                    : "bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80"
+                }`}
+                title="Add to Cart"
+              >
+                {addedToCart ? (
+                  <>
+                    <Check className="w-3 h-3 text-white" />
+                    <span>Added</span>
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-3 h-3 text-rose-600" />
+                    <span>Cart</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  triggerHaptic(10);
+                  if (onQuickBuy) {
+                    onQuickBuy(product);
+                  } else {
+                    onAddToCart?.(product);
+                  }
+                }}
+                className="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-1 shadow-xs tap-depress transition-all"
+                title="Instant Buy"
+              >
+                <span>Buy</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
           )}
         </div>
       </div>
