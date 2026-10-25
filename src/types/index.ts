@@ -61,35 +61,10 @@ export interface ProductItem {
   createdAt: string;
 }
 
-export interface StoryShowcaseItem {
-  id: string;
-  productId: string;
-  name: string;
-  dimensionLabel: string; // e.g. "23 × 26 in" or "Silk Zari"
-  price: number;
-  thumbnailUrl: string;
-  thumbnail3dUrl?: string;
-  badgeText?: string;
-}
-
-export interface StoryThemeConfig {
-  id: "mint" | "violet" | "amber" | "rose";
-  blobStart: string;
-  blobEnd: string;
-  accentHex: string;
-  softBgHex: string;
-  orbPrimary: string;
-  orbSecondary: string;
-  textTint: string;
-  svgPath: string;
-}
-
 export interface BoutiqueStory {
   id: string;
   sellerId: string;
   sellerHandle: string;
-  sellerName?: string;
-  sellerLocation?: string;
   sellerAvatar: string;
   mediaUrl: string;
   type: "new_drop" | "live_auction" | "artisan_craft";
@@ -97,13 +72,20 @@ export interface BoutiqueStory {
   productId?: string;
   ctaText?: string;
   hasUnseen?: boolean;
-  // 3D Orbital Showcase Extensions
-  hero3dUrl?: string; // 100% isolated 3D transparent PNG render
-  heroDisplayLines?: [string, string]; // e.g. ["Rani", "Phi"]
-  vaultTitle?: string; // e.g. "Artisan Loom"
-  floatingTag?: string; // e.g. "Fly-Shuttle Silk"
-  theme?: StoryThemeConfig;
-  showcaseItems?: StoryShowcaseItem[];
+
+  // Boutique Spotlight Stage & Sliding Dock Metadata
+  rankLabel?: string; // e.g. "#1 Most Loved Drop"
+  headlineLight?: string; // e.g. "CARHARTT"
+  headlineBold?: string; // e.g. "DETROIT 90S"
+  meeteiScript?: string; // e.g. "ꯏꯝꯐꯥꯜ ꯊ꯭ꯔꯤꯐꯠ"
+  dockTitle?: string; // e.g. "Imphal Thrift"
+  dockSubtitle?: string; // e.g. "Detroit '94"
+  sellerName?: string; // e.g. "Imphal Thrift Vault"
+  location?: string; // e.g. "Kwakeithel, Imphal"
+  rating?: number; // e.g. 4.9
+  socialProof?: string; // e.g. "412 sold"
+  priceLabel?: string; // e.g. "₹1,850 Bid"
+  accentTheme?: "crimson" | "amber" | "emerald" | "indigo";
 }
 
 export interface BidRecord {
