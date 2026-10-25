@@ -10,7 +10,6 @@ import { ProductCard } from "@/components/ProductCard";
 import { AuctionDrawer } from "@/components/AuctionDrawer";
 import { CheckoutDrawer } from "@/components/CheckoutDrawer";
 import { OrdersView } from "@/components/OrdersView";
-import { SellerStudio } from "@/components/SellerStudio";
 import { RiderPortal } from "@/components/RiderPortal";
 import { NavigationBottom, NavTab } from "@/components/NavigationBottom";
 import { FeedbackModal } from "@/components/FeedbackModal";
@@ -31,6 +30,7 @@ import {
   CheckCircle2,
   Package,
   Layers,
+  Store,
 } from "lucide-react";
 
 export default function Home() {
@@ -60,7 +60,6 @@ export default function Home() {
   const tabScrollRef = useRef<Record<NavTab, number>>({
     store: 0,
     drops: 0,
-    sell: 0,
     orders: 0,
     profile: 0,
   });
@@ -69,7 +68,7 @@ export default function Home() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const validTabs: NavTab[] = ["store", "drops", "sell", "orders", "profile"];
+    const validTabs: NavTab[] = ["store", "drops", "orders", "profile"];
     const initialHash = window.location.hash.replace("#", "") as NavTab;
 
     if (validTabs.includes(initialHash)) {
@@ -332,21 +331,14 @@ export default function Home() {
             </div>
           )}
 
-          {/* TAB 3: SELLER STUDIO (60s Listing) */}
-          {currentTab === "sell" && (
-            <div key="sell" className="tab-enter">
-              <SellerStudio />
-            </div>
-          )}
-
-          {/* TAB 4: ORDERS VIEW (OTP & Tracking) */}
+          {/* TAB 3: ORDERS VIEW (OTP & Real-Time Tracking) */}
           {currentTab === "orders" && (
             <div key="orders" className="tab-enter">
               <OrdersView />
             </div>
           )}
 
-          {/* TAB 5: PROFILE VIEW */}
+          {/* TAB 4: PROFILE VIEW */}
           {currentTab === "profile" && (
             <div key="profile" className="tab-enter p-4 space-y-4 max-w-md mx-auto pb-24">
               <div className="flex items-center gap-3.5 bg-white p-4 rounded-2xl border border-slate-100 shadow-xs">
@@ -364,6 +356,33 @@ export default function Home() {
                   <p className="text-[11px] text-slate-400 mt-0.5">Yaiskul Leirak, Imphal West</p>
                 </div>
               </div>
+
+              {/* Standalone Seller App Gateway */}
+              <Link
+                href="/seller"
+                onClick={() => triggerHaptic(10)}
+                className="group p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-md flex items-center justify-between hover:shadow-lg transition-all tap-depress border border-slate-700/60"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-rose-600/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shrink-0">
+                    <Store className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-extrabold text-white">
+                        Launch Shinyen Seller App
+                      </span>
+                      <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-rose-600 text-white uppercase tracking-wider">
+                        MSME Workstation
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 mt-0.5">
+                      60s drop listings • Auto image compression • Dispatch to Lookmai riders
+                    </p>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-white transition-all shrink-0 ml-2" />
+              </Link>
 
               {/* Operational Tools Section */}
               <div className="space-y-2">

@@ -4,7 +4,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { triggerHaptic } from "@/lib/utils";
 
-export type NavTab = "store" | "drops" | "sell" | "orders" | "profile";
+export type NavTab = "store" | "drops" | "orders" | "profile";
 
 interface NavigationBottomProps {
   currentTab: NavTab;
@@ -199,7 +199,6 @@ export const NavigationBottom: React.FC<NavigationBottomProps> = ({
   const tabs: TabItem[] = [
     { id: "store", label: "Store", IconComponent: StoreAnimatedIcon },
     { id: "drops", label: "Drops", IconComponent: DropsAnimatedIcon },
-    { id: "sell", label: "Sell", IconComponent: SellAnimatedIcon },
     {
       id: "orders",
       label: "Orders",
@@ -230,7 +229,7 @@ export const NavigationBottom: React.FC<NavigationBottomProps> = ({
           <div className="absolute -top-[28px] inset-x-0 bottom-0 overflow-hidden pointer-events-none z-10">
             <div className="relative w-full h-[64px] mt-[28px] nav-scoop-elevation">
               <motion.div
-                className="absolute top-0 bottom-0 left-0 w-1/5 flex justify-center"
+                className="absolute top-0 bottom-0 left-0 w-1/4 flex justify-center"
                 initial={false}
                 animate={{ x: `${safeIndex * 100}%` }}
                 transition={{
@@ -327,9 +326,9 @@ export const NavigationBottom: React.FC<NavigationBottomProps> = ({
           </div>
 
           {/* ================================================================ */}
-          {/* LAYER 2: 5-COLUMN ACCESSIBLE INTERACTIVE BUTTON MATRIX           */}
+          {/* LAYER 2: 4-COLUMN ACCESSIBLE INTERACTIVE BUTTON MATRIX           */}
           {/* ================================================================ */}
-          <div className="grid grid-cols-5 h-full relative z-20">
+          <div className="grid grid-cols-4 h-full relative z-20">
             {tabs.map((tab) => {
               const Icon = tab.IconComponent;
               const isActive = currentTab === tab.id;
