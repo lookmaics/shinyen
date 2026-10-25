@@ -68,6 +68,7 @@ export interface StoryShowcaseItem {
   dimensionLabel: string; // e.g. "23 × 26 in" or "Silk Zari"
   price: number;
   thumbnailUrl: string;
+  thumbnail3dUrl?: string;
   badgeText?: string;
 }
 
@@ -97,6 +98,7 @@ export interface BoutiqueStory {
   ctaText?: string;
   hasUnseen?: boolean;
   // 3D Orbital Showcase Extensions
+  hero3dUrl?: string; // 100% isolated 3D transparent PNG render
   heroDisplayLines?: [string, string]; // e.g. ["Rani", "Phi"]
   vaultTitle?: string; // e.g. "Artisan Loom"
   floatingTag?: string; // e.g. "Fly-Shuttle Silk"
