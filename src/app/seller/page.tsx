@@ -61,53 +61,38 @@ export default function SellerPage() {
     <div className="ios-page-enter min-h-screen bg-slate-50 flex flex-col">
       {/* Top Standalone Seller Header Bar */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 pt-safe h-header-safe flex items-center justify-between shadow-xs">
-        <Link
-          href="/"
-          onClick={() => triggerHaptic(8)}
-          className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 tap-depress py-1.5 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Marketplace</span>
-        </Link>
-
-        {/* Center Title Badge */}
-        <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-xs shadow-xs">
+        {/* Brand & Merchant Identity */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-sm shadow-xs">
             S
           </div>
-          <span className="text-sm font-black text-slate-900 tracking-tight">
-            Shinyen <span className="text-rose-600">Seller</span>
-          </span>
+          <div>
+            <span className="text-sm font-black text-slate-900 tracking-tight block leading-tight">
+              Shinyen <span className="text-rose-600">Seller</span>
+            </span>
+            <span className="text-[10px] text-slate-400 font-medium block">
+              Boutique Workstation
+            </span>
+          </div>
         </div>
 
         {/* PWA Home Screen Install Button */}
         {!isPwaInstalled ? (
           <button
             onClick={handleInstallClick}
-            className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-50 border border-rose-200/80 px-2.5 py-1 rounded-full hover:bg-rose-100 tap-depress transition-all"
-            title="Install app to Home Screen"
+            className="flex items-center gap-1.5 text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200/80 px-3 py-1.5 rounded-xl hover:bg-rose-100 tap-depress transition-all shadow-xs"
+            title="Install Shinyen Seller to your Home Screen"
           >
-            <Download className="w-3 h-3" />
-            <span>Install</span>
+            <Download className="w-3.5 h-3.5" />
+            <span>Install App</span>
           </button>
         ) : (
-          <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+          <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full">
             <CheckCircle2 className="w-3 h-3" />
             <span>App Active</span>
           </div>
         )}
       </header>
-
-      {/* Standalone Workstation Notice / Quick Link */}
-      <div className="bg-slate-900 text-white px-4 py-2 text-center text-xs flex items-center justify-center gap-2">
-        <span className="font-semibold text-slate-200">
-          Dedicated Merchant Workstation
-        </span>
-        <span className="text-slate-400">•</span>
-        <span className="text-amber-300 font-mono text-[11px]">
-          seller.shinyen.com (or /seller)
-        </span>
-      </div>
 
       {/* Main Seller Studio Workspace */}
       <main className="flex-1">

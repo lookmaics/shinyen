@@ -129,18 +129,20 @@ export default function RiderDispatchPage() {
     <div className="ios-page-enter min-h-screen bg-slate-900 text-slate-100 flex flex-col pb-24">
       {/* Top Rider Navigation Header */}
       <div className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 pt-safe h-header-safe flex items-center justify-between">
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Store</span>
-        </Link>
-
-        <span className="text-xs font-bold text-rose-500 uppercase tracking-wider flex items-center gap-1">
-          <Bike className="w-4 h-4" />
-          <span>Lookmai Fleet Dispatch</span>
-        </span>
+        {/* Dedicated Fleet Identity */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-rose-600 text-white flex items-center justify-center font-black text-xs shadow-xs">
+            <Bike className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <span className="text-xs font-black text-white tracking-wide block leading-tight">
+              Lookmai Fleet
+            </span>
+            <span className="text-[10px] text-emerald-400 font-mono font-medium block">
+              ● Rider Workstation
+            </span>
+          </div>
+        </div>
 
         <button
           onClick={() => {

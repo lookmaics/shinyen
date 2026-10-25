@@ -10,7 +10,6 @@ import { ProductCard } from "@/components/ProductCard";
 import { AuctionDrawer } from "@/components/AuctionDrawer";
 import { CheckoutDrawer } from "@/components/CheckoutDrawer";
 import { OrdersView } from "@/components/OrdersView";
-import { RiderPortal } from "@/components/RiderPortal";
 import { NavigationBottom, NavTab } from "@/components/NavigationBottom";
 import { FeedbackModal } from "@/components/FeedbackModal";
 import { useModalBackstack, wasOverlayRecentlyClosed } from "@/hooks/useBackstack";
@@ -40,7 +39,6 @@ export default function Home() {
   const [selectedDistrict, setSelectedDistrict] = useState("Imphal West");
   const [cartCount, setCartCount] = useState(1);
   const [activeOrderCount, setActiveOrderCount] = useState(1);
-  const [showRiderPortal, setShowRiderPortal] = useState(false);
   const [districtModalOpen, setDistrictModalOpen] = useState(false);
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
 
@@ -51,7 +49,6 @@ export default function Home() {
 
   // Mobile Backstack Sync for page-level modals
   useModalBackstack("district-select", districtModalOpen, () => setDistrictModalOpen(false));
-  useModalBackstack("rider-preview", showRiderPortal, () => setShowRiderPortal(false));
 
   const [exitToast, setExitToast] = useState(false);
   const lastBackPressRef = useRef(0);
@@ -119,7 +116,6 @@ export default function Home() {
   }, []);
 
   const handleSelectTab = (tab: NavTab) => {
-    setShowRiderPortal(false);
     if (tab === currentTab) {
       // Tap active tab to scroll smoothly to top (native iOS / Instagram mechanic)
       triggerHaptic(6);
@@ -249,27 +245,8 @@ export default function Home() {
         </div>
       )}
 
-      {/* VIEW: Rider Portal Mode Toggle */}
-      {showRiderPortal ? (
-        <div>
-          <div className="p-3 bg-slate-900 text-white flex items-center justify-between">
-            <span className="text-xs font-semibold flex items-center gap-1.5">
-              <Bike className="w-4 h-4 text-rose-400" />
-              Rider Dispatch Preview Mode
-            </span>
-            <button
-              onClick={() => setShowRiderPortal(false)}
-              className="text-xs bg-white/20 px-2.5 py-1 rounded-md hover:bg-white/30 font-medium"
-            >
-              Back to Store
-            </button>
-          </div>
-          <RiderPortal />
-        </div>
-      ) : (
-        <>
-          {/* TAB 1: STORE / TAB 2: LIVE DROPS */}
-          {(currentTab === "store" || currentTab === "drops") && (
+      {/* TAB 1: STORE / TAB 2: LIVE DROPS */}
+      {(currentTab === "store" || currentTab === "drops") && (
             <div key={currentTab} className="tab-enter space-y-3">
               {/* Stories Carousel */}
               <StoriesCarousel
@@ -357,68 +334,120 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Standalone Seller App Gateway */}
-              <Link
-                href="/seller"
-                onClick={() => triggerHaptic(10)}
-                className="group p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-md flex items-center justify-between hover:shadow-lg transition-all tap-depress border border-slate-700/60"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-rose-600/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shrink-0">
-                    <Store className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-extrabold text-white">
-                        Launch Shinyen Seller App
-                      </span>
-                      <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-rose-600 text-white uppercase tracking-wider">
-                        MSME Workstation
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-300 mt-0.5">
-                      60s drop listings • Auto image compression • Dispatch to Lookmai riders
-                    </p>
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-white transition-all shrink-0 ml-2" />
-              </Link>
-
-              {/* Operational Tools Section */}
+              {/* Shopping & Delivery Preferences */}
               <div className="space-y-2">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider px-1">
-                  Founder Operations & Logistics
+                  Shopping & Delivery
                 </span>
 
-                <Link
-                  href="/admin"
-                  className="w-full bg-slate-900 text-white p-3.5 rounded-xl font-bold text-xs flex items-center justify-between hover:bg-slate-800 transition-colors shadow-sm"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <ShieldCheck className="w-4 h-4 text-rose-500" />
-                    <span>Lookmai Escrow Hub (Dispute Arbitration & Payouts)</span>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400" />
-                </Link>
-
-                <Link
-                  href="/rider"
-                  className="w-full bg-slate-800 text-white p-3.5 rounded-xl font-bold text-xs flex items-center justify-between hover:bg-slate-700 transition-colors shadow-sm"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Bike className="w-4 h-4 text-rose-400" />
-                    <span>Launch Dedicated Rider Web App (/rider)</span>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400" />
-                </Link>
-
+                {/* Delivery Location Preference */}
                 <button
-                  onClick={() => setFeedbackModalOpen(true)}
-                  className="w-full bg-white text-slate-700 border border-slate-200 p-3 rounded-xl font-bold text-xs flex items-center justify-between hover:bg-slate-50 transition-colors"
+                  onClick={() => {
+                    triggerHaptic(6);
+                    setDistrictModalOpen(true);
+                  }}
+                  className="w-full bg-white text-slate-800 border border-slate-100 p-3.5 rounded-2xl font-semibold text-xs flex items-center justify-between hover:bg-slate-50 shadow-xs tap-depress transition-all"
                 >
                   <div className="flex items-center gap-2.5">
-                    <Sparkles className="w-4 h-4 text-amber-500" />
-                    <span>Report Bug / Device Feedback (Sentry Vitals)</span>
+                    <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                      <MapPin className="w-4 h-4" />
+                    </div>
+                    <div className="text-left">
+                      <span className="text-xs font-bold text-slate-900 block">
+                        Delivery Hub & Leikai
+                      </span>
+                      <span className="text-[11px] text-slate-500">
+                        {selectedDistrict} • Tap to change hub
+                      </span>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-slate-400" />
+                </button>
+
+                {/* My Purchases Quick Navigation */}
+                <button
+                  onClick={() => {
+                    triggerHaptic(6);
+                    handleSelectTab("orders");
+                  }}
+                  className="w-full bg-white text-slate-800 border border-slate-100 p-3.5 rounded-2xl font-semibold text-xs flex items-center justify-between hover:bg-slate-50 shadow-xs tap-depress transition-all"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center">
+                      <Package className="w-4 h-4" />
+                    </div>
+                    <div className="text-left">
+                      <span className="text-xs font-bold text-slate-900 block">
+                        My Purchases & Live Tracking
+                      </span>
+                      <span className="text-[11px] text-slate-500">
+                        {activeOrderCount > 0 ? `${activeOrderCount} order in transit` : "View past orders & receipts"}
+                      </span>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-slate-400" />
+                </button>
+              </div>
+
+              {/* Escrow Buyer Protection Guarantee */}
+              <div className="p-4 rounded-2xl bg-slate-900 text-white space-y-2 shadow-md">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+                  <span className="text-xs font-bold text-white tracking-wide">
+                    LOOKMAI 48h Unboxing Protection
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-relaxed">
+                  Every order on Shinyen is escrow-backed. Your payment is safely held until 48 hours after delivery. If the piece doesn’t match measurements or flaws were undisclosed, you get an instant 100% refund.
+                </p>
+              </div>
+
+              {/* Customer Care & Feedback */}
+              <div className="space-y-2">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider px-1">
+                  Customer Care & Support
+                </span>
+
+                {/* WhatsApp Concierge Support */}
+                <a
+                  href="https://wa.me/919862000000"
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => triggerHaptic(8)}
+                  className="w-full flex items-center justify-between p-3.5 rounded-2xl border border-emerald-500/30 bg-emerald-50/60 text-emerald-900 text-xs font-bold hover:bg-emerald-100/70 shadow-xs tap-depress transition-all"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center">
+                      <MessageCircle className="w-4 h-4" />
+                    </div>
+                    <div className="text-left">
+                      <span className="block font-bold">Lookmai Founder Concierge</span>
+                      <span className="text-[11px] text-emerald-700 font-normal">
+                        Direct WhatsApp support for sizing & deliveries
+                      </span>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-emerald-600" />
+                </a>
+
+                {/* Report Bug / Feedback */}
+                <button
+                  onClick={() => {
+                    triggerHaptic(6);
+                    setFeedbackModalOpen(true);
+                  }}
+                  className="w-full bg-white text-slate-700 border border-slate-200/80 p-3 rounded-2xl font-bold text-xs flex items-center justify-between hover:bg-slate-50 shadow-xs tap-depress transition-all"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div className="text-left">
+                      <span className="block font-bold text-slate-900">App Feedback & Suggestions</span>
+                      <span className="text-[11px] text-slate-500 font-normal">
+                        Help us improve Shinyen for Manipur
+                      </span>
+                    </div>
                   </div>
                   <ArrowRight className="w-4 h-4 text-slate-400" />
                 </button>
@@ -439,21 +468,8 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-
-              {/* Quick Contact & WhatsApp Support */}
-              <a
-                href="https://wa.me/919862000000"
-                target="_blank"
-                rel="noreferrer"
-                className="w-full flex items-center justify-center gap-2 p-3 rounded-xl border border-emerald-500/30 bg-emerald-50/50 text-emerald-800 text-xs font-bold hover:bg-emerald-100 transition-colors"
-              >
-                <MessageCircle className="w-4 h-4 text-emerald-600" />
-                Contact Lookmai Founder Concierge (WhatsApp)
-              </a>
             </div>
           )}
-        </>
-      )}
 
       {/* Fixed Bottom Navigation */}
       <NavigationBottom
