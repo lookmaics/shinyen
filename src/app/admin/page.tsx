@@ -19,10 +19,59 @@ import {
   Layers,
   Database,
   ArrowLeft,
+  Download,
+  Share,
+  PlusSquare,
+  X,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<"disputes" | "settlement" | "storage">("disputes");
+
+  // PWA Home Screen Installation State
+  const [isPwaInstalled, setIsPwaInstalled] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [showIosPrompt, setShowIosPrompt] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstall = (e: any) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handleBeforeInstall);
+
+    if (
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true
+    ) {
+      setIsPwaInstalled(true);
+    }
+
+    const handleAppInstalled = () => {
+      setIsPwaInstalled(true);
+      setInstallPrompt(null);
+    };
+    window.addEventListener("appinstalled", handleAppInstalled);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    triggerHaptic(12);
+    if (installPrompt) {
+      installPrompt.prompt();
+      const choice = await installPrompt.userChoice;
+      if (choice.outcome === "accepted") {
+        setIsPwaInstalled(true);
+      }
+      setInstallPrompt(null);
+    } else {
+      setShowIosPrompt(true);
+    }
+  };
 
   // Dispute Arbitration State
   const [disputeDecision, setDisputeDecision] = useState<string | null>(null);
@@ -106,22 +155,36 @@ export default function AdminDashboardPage() {
     <div className="ios-page-enter min-h-screen bg-slate-900 text-slate-100 flex flex-col pb-24">
       {/* Admin Top Header */}
       <div className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 pt-safe h-header-safe flex items-center justify-between">
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Exit to Store</span>
-        </Link>
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-600 to-red-700 text-white flex items-center justify-center font-black text-xs shadow-xs">
+            LM
+          </div>
+          <div>
+            <span className="text-xs font-black text-white tracking-wide block leading-tight">
+              Lookmai Control Hub
+            </span>
+            <span className="text-[10px] text-rose-400 font-mono font-medium block">
+              ● Founder Command
+            </span>
+          </div>
+        </div>
 
-        <span className="text-xs font-bold text-rose-500 uppercase tracking-wider flex items-center gap-1">
-          <ShieldAlert className="w-4 h-4" />
-          <span>Lookmai Control Hub</span>
-        </span>
+        <div className="flex items-center gap-2">
+          {!isPwaInstalled && (
+            <button
+              onClick={handleInstallClick}
+              className="flex items-center gap-1 text-[11px] font-bold text-rose-400 bg-rose-950/80 border border-rose-600/60 px-2.5 py-1 rounded-full hover:bg-rose-900/60 tap-depress transition-all shadow-xs"
+              title="Install Lookmai Admin to Home Screen"
+            >
+              <Download className="w-3 h-3 text-rose-400" />
+              <span>Install App</span>
+            </button>
+          )}
 
-        <span className="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">
-          Super Admin
-        </span>
+          <span className="text-[10px] font-mono bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full border border-slate-700">
+            Super Admin
+          </span>
+        </div>
       </div>
 
       {/* Primary Financial & Safety Pool Metrics */}
@@ -433,6 +496,80 @@ export default function AdminDashboardPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* iOS & Browser PWA Installation Guide Modal */}
+      {showIosPrompt && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-4 animate-fade-in">
+          <div className="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-4 text-white">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-600 to-red-700 flex items-center justify-center text-white font-bold text-xs shadow-xs">
+                  LM
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-sm">Install Lookmai Admin</h3>
+                  <p className="text-[10px] text-slate-400 font-medium">Founder & Operations Hub</p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  triggerHaptic(6);
+                  setShowIosPrompt(false);
+                }}
+                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center font-bold text-sm"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 py-1">
+              <div className="flex items-start gap-3">
+                <div className="w-7 h-7 rounded-xl bg-rose-950/80 border border-rose-800/60 flex items-center justify-center text-rose-400 font-bold text-xs shrink-0 mt-0.5">
+                  1
+                </div>
+                <div className="text-xs text-slate-300 leading-relaxed">
+                  Tap the <span className="font-bold text-white inline-flex items-center gap-1 px-1.5 py-0.5 bg-slate-800 rounded-md"><Share className="w-3 h-3 text-rose-400 inline" /> Share</span> button in Safari&apos;s bottom bar (or browser menu ⋮).
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-7 h-7 rounded-xl bg-rose-950/80 border border-rose-800/60 flex items-center justify-center text-rose-400 font-bold text-xs shrink-0 mt-0.5">
+                  2
+                </div>
+                <div className="text-xs text-slate-300 leading-relaxed">
+                  Scroll down the share sheet and tap <span className="font-bold text-white inline-flex items-center gap-1 px-1.5 py-0.5 bg-slate-800 rounded-md"><PlusSquare className="w-3 h-3 text-rose-400 inline" /> Add to Home Screen</span>.
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-7 h-7 rounded-xl bg-rose-950/80 border border-rose-800/60 flex items-center justify-center text-rose-400 font-bold text-xs shrink-0 mt-0.5">
+                  3
+                </div>
+                <div className="text-xs text-slate-300 leading-relaxed">
+                  Tap <span className="font-bold text-rose-400">Add</span> in the top-right corner to finish installing.
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 bg-slate-800/70 rounded-2xl border border-slate-700/60 flex items-center gap-2.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+              <p className="text-[11px] text-slate-300 font-medium">
+                1-tap direct access to Escrow pools, dispute arbitration, and payout releases.
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                triggerHaptic(8);
+                setShowIosPrompt(false);
+              }}
+              className="w-full py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs tap-depress transition-all shadow-md"
+            >
+              Got it!
+            </button>
+          </div>
         </div>
       )}
     </div>
