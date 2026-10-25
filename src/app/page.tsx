@@ -145,7 +145,12 @@ export default function Home() {
 
   // Filter products based on tab and category
   const filteredProducts = mockProducts.filter((product) => {
-    // If on "drops" tab, only show active auctions / drops
+    // TAB 1: STORE -> 100% Fixed Price Instant Buy Catalog
+    if (currentTab === "store") {
+      if (product.isAuction) return false;
+    }
+
+    // TAB 2: DROPS -> 100% Live Drops & Timed Auctions
     if (currentTab === "drops") {
       if (!product.isAuction || product.isSoldOut) return false;
     }
@@ -260,17 +265,54 @@ export default function Home() {
                 }}
               />
 
-              {/* Sunday Drop Banner for Live Drops */}
+              {/* STORE TAB ONLY: Live Drop Bridge Banner */}
+              {currentTab === "store" && (
+                <div
+                  onClick={() => {
+                    triggerHaptic(10);
+                    handleSelectTab("drops");
+                  }}
+                  className="mx-4 p-3 rounded-2xl bg-gradient-to-r from-slate-900 via-rose-950 to-slate-900 text-white border border-rose-500/30 shadow-md cursor-pointer tap-depress relative overflow-hidden group"
+                >
+                  <div className="flex items-center justify-between relative z-10">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center shrink-0 shadow-sm">
+                        <Flame className="w-5 h-5 text-amber-300 fill-amber-300 animate-pulse" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-black text-white tracking-tight">
+                            Sunday 8 PM Drop is LIVE
+                          </span>
+                          <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-rose-600 text-white animate-pulse">
+                            ● 01h 42m left
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-slate-300 mt-0.5 line-clamp-1">
+                          Rare archival Carhartt & Evisu selvedge denim up for bid
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1 text-[11px] font-bold text-rose-400 group-hover:translate-x-0.5 transition-transform shrink-0">
+                      <span>Enter Arena</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* DROPS TAB ONLY: High-Energy Live Drop Banner */}
               {currentTab === "drops" && (
                 <div className="mx-4 p-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-700 text-white shadow-md relative overflow-hidden">
                   <div className="relative z-10 flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300 uppercase tracking-wide">
-                        <Flame className="w-4 h-4" /> Live Drop Stream
+                        <Flame className="w-4 h-4 fill-amber-300" /> Live Drop Arena
                       </div>
                       <h2 className="text-lg font-black tracking-tight mt-0.5">Sunday 8:00 PM Drop</h2>
                       <p className="text-xs text-white/90 mt-1 max-w-[260px]">
-                        Anti-sniping soft close active. Zero-troll WhatsApp anti-Sybil verified bidders only.
+                        Anti-sniping soft close active (+2 mins on late bids). 1-of-1 archival grails.
                       </p>
                     </div>
                     <div className="bg-black/30 backdrop-blur-xs rounded-xl px-2.5 py-1.5 text-center border border-white/10 shrink-0">
@@ -287,14 +329,24 @@ export default function Home() {
                 onSelect={(cat) => setSelectedCategory(cat)}
               />
 
-              {/* Verified Anti-Counterfeit Guarantee Micro-Pill */}
-              <div className="mx-4 py-2 px-3 rounded-xl bg-slate-100/90 border border-slate-200/60 flex items-center justify-between text-xs text-slate-700">
-                <span className="flex items-center gap-1.5 font-medium">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                  Lookmai Escrow: 48h Inspection Window
-                </span>
-                <span className="text-[11px] text-slate-500 font-semibold">Zero Dropshippers</span>
-              </div>
+              {/* Contextual Trust / Live Status Pill */}
+              {currentTab === "store" ? (
+                <div className="mx-4 py-2 px-3 rounded-xl bg-slate-100/90 border border-slate-200/60 flex items-center justify-between text-xs text-slate-700">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                    Lookmai Escrow: 48h Inspection Window
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-semibold">Zero Dropshippers</span>
+                </div>
+              ) : (
+                <div className="mx-4 py-2 px-3 rounded-xl bg-rose-50 border border-rose-200/80 flex items-center justify-between text-xs text-rose-900">
+                  <span className="flex items-center gap-1.5 font-bold">
+                    <Flame className="w-4 h-4 text-rose-600 fill-rose-600" />
+                    Live Bidding Room ({filteredProducts.length} Grails)
+                  </span>
+                  <span className="text-[11px] text-rose-700 font-semibold">Verified WhatsApp Bidders</span>
+                </div>
+              )}
 
               {/* Product Grid */}
               <div className="px-4 grid grid-cols-2 gap-3 pb-6">
