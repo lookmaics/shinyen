@@ -90,20 +90,9 @@ export const StoriesCarousel: React.FC<StoriesCarouselProps> = ({
   };
 
   return (
-    <div className="w-full pt-3 pb-2.5 bg-white border-b border-slate-100">
-      {/* Micro-Header for Curators */}
-      <div className="flex items-center justify-between px-4 mb-2.5">
-        <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-extrabold text-slate-800 uppercase tracking-wider">
-            Verified Curators & Artisans
-          </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-ping" />
-        </div>
-        <span className="text-[10px] text-slate-400 font-semibold">24h Stories</span>
-      </div>
-
+    <div className="w-full pt-3 pb-3 bg-white border-b border-slate-100">
       {/* Full-Bleed Edge-to-Edge Horizontal Scroll */}
-      <div className="flex items-start gap-4 overflow-x-auto scrollbar-none px-4 pb-1">
+      <div className="flex items-start gap-3.5 overflow-x-auto scrollbar-none px-4">
         {stories.map((story, index) => {
           const isAuction = story.type === "live_auction";
           const isArtisan = story.type === "artisan_craft";
@@ -153,15 +142,10 @@ export const StoriesCarousel: React.FC<StoriesCarouselProps> = ({
                 )}
               </div>
 
-              {/* Two-Line Real Identity Label */}
-              <div className="w-[74px] text-center flex flex-col items-center pt-0.5 -space-y-0.5">
-                <span className="text-xs font-bold text-slate-900 truncate max-w-full leading-tight">
-                  {story.sellerName || story.sellerHandle}
-                </span>
-                <span className="text-[10px] text-slate-400 font-medium truncate max-w-full leading-tight">
-                  {story.location || `@${story.sellerHandle}`}
-                </span>
-              </div>
+              {/* Clean Single-Line Name Label */}
+              <span className="text-xs font-bold text-slate-800 truncate max-w-[76px] text-center pt-0.5">
+                {story.sellerName || story.sellerHandle}
+              </span>
             </button>
           );
         })}
