@@ -64,28 +64,16 @@ export interface ProductItem {
 export interface BoutiqueStory {
   id: string;
   sellerId: string;
+  sellerName?: string;
   sellerHandle: string;
   sellerAvatar: string;
+  location?: string;
   mediaUrl: string;
   type: "new_drop" | "live_auction" | "artisan_craft";
   title: string;
   productId?: string;
   ctaText?: string;
   hasUnseen?: boolean;
-
-  // Boutique Spotlight Stage & Sliding Dock Metadata
-  rankLabel?: string; // e.g. "#1 Most Loved Drop"
-  headlineLight?: string; // e.g. "CARHARTT"
-  headlineBold?: string; // e.g. "DETROIT 90S"
-  meeteiScript?: string; // e.g. "ꯏꯝꯐꯥꯜ ꯊ꯭ꯔꯤꯐꯠ"
-  dockTitle?: string; // e.g. "Imphal Thrift"
-  dockSubtitle?: string; // e.g. "Detroit '94"
-  sellerName?: string; // e.g. "Imphal Thrift Vault"
-  location?: string; // e.g. "Kwakeithel, Imphal"
-  rating?: number; // e.g. 4.9
-  socialProof?: string; // e.g. "412 sold"
-  priceLabel?: string; // e.g. "₹1,850 Bid"
-  accentTheme?: "crimson" | "amber" | "emerald" | "indigo";
 }
 
 export interface BidRecord {
