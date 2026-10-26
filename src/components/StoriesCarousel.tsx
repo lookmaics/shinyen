@@ -124,20 +124,10 @@ export const StoriesCarousel: React.FC<StoriesCarouselProps> = ({
                   </div>
                 </div>
 
-                {/* Floating Bottom Rim Badge */}
+                {/* Floating Bottom Rim Badge: Only when Live Drop is active */}
                 {isAuction && (
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[9px] font-black uppercase tracking-wider shadow-sm border border-white flex items-center gap-0.5 whitespace-nowrap">
                     <Flame className="w-2.5 h-2.5 fill-white" /> LIVE
-                  </span>
-                )}
-                {isArtisan && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.2 rounded-full bg-emerald-700 text-white text-[9px] font-black uppercase tracking-wider shadow-sm border border-white flex items-center gap-0.5 whitespace-nowrap">
-                    🧵 LOOM
-                  </span>
-                )}
-                {!isAuction && !isArtisan && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.2 rounded-full bg-gradient-to-r from-rose-600 to-amber-500 text-white text-[9px] font-black uppercase tracking-wider shadow-sm border border-white flex items-center gap-0.5 whitespace-nowrap">
-                    ✨ NEW
                   </span>
                 )}
               </div>

@@ -256,14 +256,16 @@ export default function Home() {
       {/* TAB 1: STORE / TAB 2: LIVE DROPS */}
       {(currentTab === "store" || currentTab === "drops") && (
             <div key={currentTab} className="tab-enter space-y-3">
-              {/* Stories Carousel */}
-              <StoriesCarousel
-                stories={mockStories}
-                onSelectStoryProduct={(productId) => {
-                  const p = mockProducts.find((item) => item.id === productId);
-                  if (p) handleOpenProduct(p);
-                }}
-              />
+              {/* Stories Carousel: STORE TAB ONLY */}
+              {currentTab === "store" && (
+                <StoriesCarousel
+                  stories={mockStories}
+                  onSelectStoryProduct={(productId) => {
+                    const p = mockProducts.find((item) => item.id === productId);
+                    if (p) handleOpenProduct(p);
+                  }}
+                />
+              )}
 
               {/* STORE TAB ONLY: Live Drop Bridge Banner */}
               {currentTab === "store" && (
